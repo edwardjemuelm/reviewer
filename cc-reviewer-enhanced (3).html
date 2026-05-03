@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CC Cybersecurity Reviewer</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080b10;
+    --surface: #0f1319;
+    --surface2: #161c26;
+    --surface3: #1e2535;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.14);
+    --accent: #4f8ef7;
+    --accent2: #9b72f8;
+    --accent3: #2dd4a0;
+    --danger: #f06464;
+    --warning: #f5a623;
+    --text: #e8ecf4;
+    --text2: #7f8aaa;
+    --text3: #444e6a;
+    --font: 'IBM Plex Sans', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+    --radius: 12px;
+    --radius-sm: 7px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* SVG ICONS */
+  .icon { display: inline-block; vertical-align: middle; flex-shrink: 0; }
+
+  /* HEADER */
+  header {
+    background: rgba(8,11,16,0.92);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: 58px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .logo {
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--text);
+  }
+  .logo-icon {
+    width: 30px; height: 30px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  nav {
+    display: flex;
+    gap: 2px;
+    margin-left: auto;
+  }
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--text2);
+    font-family: var(--font);
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav-btn:hover { background: var(--surface2); color: var(--text); }
+  .nav-btn.active { background: rgba(79,142,247,0.15); color: var(--accent); }
+  .nav-btn.active svg path, .nav-btn.active svg rect, .nav-btn.active svg circle,
+  .nav-btn.active svg polyline, .nav-btn.active svg line, .nav-btn.active svg polygon { stroke: var(--accent); }
+
+  /* SCREENS */
+  .screen { display: none; padding: 2rem; max-width: 860px; margin: 0 auto; }
+  .screen.active { display: block; animation: fadeIn 0.2s ease; }
+
+  /* HOME SCREEN */
+  .hero {
+    padding: 2.5rem 0 2rem;
+  }
+  .hero-eyebrow {
+    font-size: 0.68rem;
+    font-family: var(--mono);
+    font-weight: 500;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 20px; height: 1px;
+    background: var(--accent);
+  }
+  .hero h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 0.6rem;
+    line-height: 1.15;
+  }
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p { color: var(--text2); font-size: 0.875rem; line-height: 1.65; max-width: 520px; }
+  .chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 2rem;
+  }
+  .chapter-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .chapter-card::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+    opacity: 0.8;
+  }
+  .ch1::after { background: #4f8ef7; }
+  .ch2::after { background: #9b72f8; }
+  .ch3::after { background: #2dd4a0; }
+  .ch4::after { background: #f5a623; }
+  .ch5::after { background: #f06464; }
+  .chapter-card:hover { border-color: var(--border2); transform: translateY(-1px); background: var(--surface2); }
+  .chapter-num {
+    font-size: 0.65rem;
+    font-weight: 600;
+    font-family: var(--mono);
+    color: var(--text3);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .chapter-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.35;
+  }
+  .chapter-count {
+    font-size: 0.7rem;
+    color: var(--text3);
+    font-family: var(--mono);
+  }
+  .mode-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 1.25rem;
+  }
+  .mode-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .mode-card:hover { border-color: rgba(79,142,247,0.4); background: var(--surface2); }
+  .mode-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 10px;
+  }
+  .mode-icon-flash { background: rgba(79,142,247,0.15); }
+  .mode-icon-quiz { background: rgba(155,114,248,0.15); }
+  .mode-icon-review { background: rgba(45,212,160,0.15); }
+  .mode-name { font-size: 0.82rem; font-weight: 600; margin-bottom: 4px; }
+  .mode-desc { font-size: 0.7rem; color: var(--text2); line-height: 1.45; }
+  .section-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    font-family: var(--mono);
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin: 2rem 0 0.75rem;
+  }
+
+  /* FLASHCARD SCREEN */
+  .fc-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .fc-header h2 { font-size: 0.95rem; font-weight: 600; flex: 1; }
+  .back-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    font-family: var(--font);
+    font-size: 0.75rem;
+    padding: 6px 11px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .back-btn:hover { border-color: var(--border2); color: var(--text); }
+  .fc-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .fc-bar-wrap {
+    flex: 1;
+    height: 3px;
+    background: var(--surface3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .fc-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+  .fc-count { font-size: 0.72rem; font-family: var(--mono); color: var(--text2); white-space: nowrap; }
+  .flashcard-wrap {
+    perspective: 1200px;
+    margin-bottom: 1.5rem;
+  }
+  .flashcard {
+    width: 100%;
+    min-height: 280px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 2rem;
+    border: 1px solid var(--border);
+  }
+  .card-front { background: var(--surface); }
+  .card-back {
+    background: var(--surface2);
+    transform: rotateY(180deg);
+    border-color: rgba(79,142,247,0.3);
+  }
+  .card-label {
+    font-size: 0.62rem;
+    font-family: var(--mono);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text3);
+    margin-bottom: 1rem;
+  }
+  .card-back .card-label { color: var(--accent); }
+  .card-term {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--text2);
+    text-align: center;
+    line-height: 1.65;
+    max-width: 560px;
+  }
+  .card-answer {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-align: center;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    max-width: 520px;
+  }
+  /* Speaker button on flashcard */
+  .card-speak-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 1.5rem;
+  }
+  .card-hint {
+    font-size: 0.7rem;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .speak-btn {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    color: var(--text3);
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: rgba(79,142,247,0.12); border-color: var(--accent); color: var(--accent); }
+  .speak-btn.speaking { background: rgba(79,142,247,0.15); border-color: var(--accent); color: var(--accent); }
+  .speak-btn.speaking svg { animation: pulse-icon 0.8s ease-in-out infinite alternate; }
+  @keyframes pulse-icon { from { opacity: 0.6; } to { opacity: 1; } }
+
+  .fc-controls {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 10px;
+    align-items: center;
+  }
+  .fc-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: center;
+  }
+  .fc-btn:hover { border-color: var(--border2); background: var(--surface2); }
+  .fc-btn.prev { justify-self: start; }
+  .fc-btn.next { justify-self: end; }
+  .fc-flip-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    color: #fff;
+    font-family: var(--font);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 10px 22px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .fc-flip-btn:hover { opacity: 0.9; transform: scale(1.02); }
+  .fc-shuffle {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    gap: 8px;
+  }
+  .fc-chapter-select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 0.78rem;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 1rem;
+    outline: none;
+  }
+  .fc-chapter-select:focus { border-color: var(--accent); }
+  option { background: #0f1319; }
+
+  /* QUIZ SCREEN */
+  .quiz-setup {
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 2rem 0;
+  }
+  .quiz-setup h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .quiz-setup p { color: var(--text2); font-size: 0.82rem; margin-bottom: 2rem; line-height: 1.6; }
+  .setup-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+    text-align: left;
+  }
+  .setup-row {
+    grid-column: 1/-1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    gap: 12px;
+  }
+  .setup-row label { font-size: 0.8rem; color: var(--text2); }
+  .setup-row select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 0.78rem;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    min-width: 140px;
+    outline: none;
+  }
+  .start-quiz-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    color: #fff;
+    font-family: var(--font);
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 13px 36px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s;
+    width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .start-quiz-btn:hover { opacity: 0.9; transform: scale(1.01); }
+  .quiz-active { display: none; }
+  .quiz-active.show { display: block; }
+  .quiz-setup-wrap.hide { display: none; }
+  .q-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .q-header h3 { font-size: 0.88rem; font-weight: 600; flex: 1; }
+  .q-num {
+    font-size: 0.7rem;
+    font-family: var(--mono);
+    color: var(--text2);
+  }
+  .q-progress-bar {
+    width: 100%;
+    height: 3px;
+    background: var(--surface3);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 1.75rem;
+  }
+  .q-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+    margin-bottom: 1.25rem;
+    position: relative;
+  }
+  .q-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 0.75rem;
+  }
+  .q-badge {
+    font-size: 0.62rem;
+    font-family: var(--mono);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text3);
+  }
+  .q-text {
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.65;
+    color: var(--text);
+  }
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 1.25rem;
+  }
+  .opt-btn {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.9rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    font-family: var(--font);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .opt-btn:hover:not(:disabled) { border-color: var(--accent); background: var(--surface2); }
+  .opt-btn:disabled { cursor: default; }
+  .opt-btn.correct { border-color: var(--accent3); background: rgba(45,212,160,0.07); }
+  .opt-btn.wrong { border-color: var(--danger); background: rgba(240,100,100,0.07); }
+  .opt-letter {
+    width: 22px; height: 22px;
+    min-width: 22px;
+    border-radius: 5px;
+    background: var(--surface3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    font-family: var(--mono);
+    color: var(--text2);
+    transition: all 0.15s;
+    margin-top: 1px;
+  }
+  .opt-btn.correct .opt-letter { background: var(--accent3); color: #fff; }
+  .opt-btn.wrong .opt-letter { background: var(--danger); color: #fff; }
+  .opt-text { font-size: 0.8rem; line-height: 1.45; color: var(--text); flex: 1; }
+  .q-feedback {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.9rem 1.1rem;
+    font-size: 0.8rem;
+    line-height: 1.55;
+    color: var(--text2);
+    margin-bottom: 1.25rem;
+    display: none;
+  }
+  .q-feedback.show { display: block; }
+  .q-feedback.correct { border-color: rgba(45,212,160,0.4); }
+  .q-feedback.wrong { border-color: rgba(240,100,100,0.3); }
+  .feedback-correct { color: var(--accent3); font-weight: 600; }
+  .feedback-wrong { color: var(--danger); font-weight: 600; }
+  .next-q-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 11px 24px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s;
+    width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .next-q-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* RESULTS */
+  .results-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+  .score-ring { width: 120px; height: 120px; margin: 0 auto 1.5rem; position: relative; }
+  .score-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .score-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .score-num { font-size: 1.7rem; font-weight: 700; color: var(--text); }
+  .score-label { font-size: 0.62rem; font-family: var(--mono); color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; }
+  .score-verdict { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.4rem; }
+  .score-sub { font-size: 0.8rem; color: var(--text2); }
+  .results-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.25rem; }
+  .stat-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    text-align: center;
+  }
+  .stat-num { font-size: 1.35rem; font-weight: 700; font-family: var(--mono); }
+  .stat-lbl { font-size: 0.65rem; font-family: var(--mono); color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 3px; }
+  .correct-color { color: var(--accent3); }
+  .wrong-color { color: var(--danger); }
+  .results-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .res-btn {
+    padding: 11px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .res-btn:hover { border-color: var(--border2); }
+  .res-btn.primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; color: #fff;
+  }
+  .res-btn.primary:hover { opacity: 0.9; }
+
+  /* REVIEW SCREEN */
+  .review-controls {
+    display: flex; gap: 8px; margin-bottom: 1.5rem;
+    flex-wrap: wrap; align-items: center;
+  }
+  .review-search-wrap {
+    flex: 1; min-width: 200px;
+    position: relative; display: flex; align-items: center;
+  }
+  .review-search-wrap svg {
+    position: absolute; left: 10px; pointer-events: none; opacity: 0.4;
+  }
+  .review-search {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 0.8rem;
+    padding: 9px 14px 9px 34px;
+    border-radius: var(--radius-sm);
+    outline: none;
+  }
+  .review-search:focus { border-color: var(--accent); }
+  .review-filter {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 0.78rem;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    outline: none;
+  }
+  .review-grid { display: grid; gap: 6px; }
+  .review-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.9rem 1.1rem;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0 0.85rem;
+    align-items: start;
+    transition: border-color 0.15s;
+  }
+  .review-item:hover { border-color: var(--border2); }
+  .review-term {
+    font-size: 0.7rem;
+    font-weight: 700;
+    font-family: var(--mono);
+    color: var(--accent);
+    padding-top: 3px;
+    min-width: 26px;
+    text-align: right;
+  }
+  .review-content { display: flex; flex-direction: column; gap: 3px; }
+  .review-def { font-size: 0.78rem; line-height: 1.5; color: var(--text2); }
+  .review-answer { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+  .ch-tag {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-family: var(--mono);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    width: fit-content;
+  }
+  .review-speak-btn {
+    background: none;
+    border: none;
+    color: var(--text3);
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    align-self: center;
+  }
+  .review-speak-btn:hover { background: rgba(79,142,247,0.1); color: var(--accent); }
+  .review-speak-btn.speaking { color: var(--accent); }
+  .play-all-btn {
+    background: rgba(79,142,247,0.12);
+    border: 1px solid rgba(79,142,247,0.3);
+    color: var(--accent);
+    font-family: var(--font);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 9px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .play-all-btn:hover { background: rgba(79,142,247,0.2); border-color: var(--accent); }
+  .play-all-btn.playing { background: rgba(240,100,100,0.12); border-color: rgba(240,100,100,0.4); color: var(--danger); }
+  .play-all-btn.playing:hover { background: rgba(240,100,100,0.2); }
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text3);
+    font-size: 0.82rem;
+  }
+
+  /* TTS toast */
+  .tts-toast {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 30px;
+    padding: 8px 16px;
+    font-size: 0.75rem;
+    color: var(--text2);
+    display: flex; align-items: center; gap: 8px;
+    opacity: 0; transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 200;
+    white-space: nowrap;
+    max-width: calc(100vw - 3rem);
+  }
+  .tts-toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+  .tts-progress { font-family: var(--mono); font-size: 0.68rem; color: var(--accent); font-weight: 600; flex-shrink: 0; }
+  .tts-toast-label { overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+  .tts-stop-btn {
+    background: rgba(240,100,100,0.15);
+    border: 1px solid rgba(240,100,100,0.3);
+    color: var(--danger);
+    font-family: var(--font);
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    display: none;
+  }
+  .tts-stop-btn:hover { background: rgba(240,100,100,0.25); }
+  .tts-toast.play-all-mode .tts-stop-btn { display: inline-flex; align-items: center; gap: 4px; }
+  .tts-wave {
+    display: flex; align-items: center; gap: 2px;
+  }
+  .tts-wave span {
+    display: inline-block;
+    width: 3px;
+    border-radius: 2px;
+    background: var(--accent);
+    animation: wave-bar 0.8s ease-in-out infinite;
+  }
+  .tts-wave span:nth-child(1) { height: 6px; animation-delay: 0s; }
+  .tts-wave span:nth-child(2) { height: 12px; animation-delay: 0.15s; }
+  .tts-wave span:nth-child(3) { height: 8px; animation-delay: 0.3s; }
+  .tts-wave span:nth-child(4) { height: 14px; animation-delay: 0.1s; }
+  .tts-wave span:nth-child(5) { height: 6px; animation-delay: 0.25s; }
+  @keyframes wave-bar {
+    0%, 100% { transform: scaleY(0.5); opacity: 0.6; }
+    50% { transform: scaleY(1); opacity: 1; }
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
+  .opt-btn.correct { animation: pop 0.3s ease; }
+
+  @media (max-width: 600px) {
+    .mode-row { grid-template-columns: 1fr; }
+    .options-grid { grid-template-columns: 1fr; }
+    .results-actions { grid-template-columns: 1fr; }
+    header { padding: 0 1rem; }
+    .screen { padding: 1rem; }
+    .nav-btn span { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TTS Toast -->
+<div class="tts-toast" id="tts-toast">
+  <div class="tts-wave"><span></span><span></span><span></span><span></span><span></span></div>
+  <span class="tts-progress" id="tts-progress" style="display:none"></span>
+  <span class="tts-toast-label" id="tts-toast-text">Reading aloud...</span>
+  <button class="tts-stop-btn" onclick="stopPlayAll()" id="tts-stop-btn">
+    <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+    Stop
+  </button>
+</div>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="5" height="5" rx="1" fill="white" opacity="0.9"/>
+        <rect x="9" y="2" width="5" height="5" rx="1" fill="white" opacity="0.6"/>
+        <rect x="2" y="9" width="5" height="5" rx="1" fill="white" opacity="0.6"/>
+        <rect x="9" y="9" width="5" height="5" rx="1" fill="white" opacity="0.9"/>
+      </svg>
+    </div>
+    CC Cybersecurity Reviewer
+  </div>
+  <nav>
+    <button class="nav-btn active" onclick="showScreen('home')" id="nav-home">
+      <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="nav-btn" onclick="showScreen('flashcard')" id="nav-flashcard">
+      <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M8 8h8M8 12h5"/></svg>
+      <span>Flashcards</span>
+    </button>
+    <button class="nav-btn" onclick="showScreen('quiz')" id="nav-quiz">
+      <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span>Quiz</span>
+    </button>
+    <button class="nav-btn" onclick="showScreen('review')" id="nav-review">
+      <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Review</span>
+    </button>
+  </nav>
+</header>
+
+<!-- HOME SCREEN -->
+<div class="screen active" id="screen-home">
+  <div class="hero">
+    <div class="hero-eyebrow">ISC² Certification Prep</div>
+    <h1>(ISC)² CC <span>Exam Reviewer</span></h1>
+    <p>Master the Certified in Cybersecurity exam with flashcards, multiple-choice quizzes, and a full glossary. 174 terms across 5 domains.</p>
+  </div>
+  <div class="section-label">Study Mode</div>
+  <div class="mode-row">
+    <div class="mode-card" onclick="showScreen('flashcard')">
+      <div class="mode-icon mode-icon-flash">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4f8ef7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M8 8h8M8 12h5"/></svg>
+      </div>
+      <div class="mode-name">Flashcards</div>
+      <div class="mode-desc">Flip through terms and definitions at your own pace</div>
+    </div>
+    <div class="mode-card" onclick="showScreen('quiz')">
+      <div class="mode-icon mode-icon-quiz">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9b72f8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="mode-name">Quiz</div>
+      <div class="mode-desc">Test yourself with multiple-choice questions</div>
+    </div>
+    <div class="mode-card" onclick="showScreen('review')">
+      <div class="mode-icon mode-icon-review">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2dd4a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </div>
+      <div class="mode-name">Review</div>
+      <div class="mode-desc">Browse all definitions by chapter</div>
+    </div>
+  </div>
+  <div class="section-label">Domains</div>
+  <div class="chapter-grid">
+    <div class="chapter-card ch1" onclick="startFlashcards(0)">
+      <div class="chapter-num">Chapter 1</div>
+      <div class="chapter-title">Security Principles</div>
+      <div class="chapter-count">57 terms</div>
+    </div>
+    <div class="chapter-card ch2" onclick="startFlashcards(1)">
+      <div class="chapter-num">Chapter 2</div>
+      <div class="chapter-title">Incident Response, BC &amp; DR</div>
+      <div class="chapter-count">17 terms</div>
+    </div>
+    <div class="chapter-card ch3" onclick="startFlashcards(2)">
+      <div class="chapter-num">Chapter 3</div>
+      <div class="chapter-title">Access Control Concepts</div>
+      <div class="chapter-count">28 terms</div>
+    </div>
+    <div class="chapter-card ch4" onclick="startFlashcards(3)">
+      <div class="chapter-num">Chapter 4</div>
+      <div class="chapter-title">Network Security</div>
+      <div class="chapter-count">38 terms</div>
+    </div>
+    <div class="chapter-card ch5" onclick="startFlashcards(4)">
+      <div class="chapter-num">Chapter 5</div>
+      <div class="chapter-title">Security Operations</div>
+      <div class="chapter-count">34 terms</div>
+    </div>
+  </div>
+</div>
+
+<!-- FLASHCARD SCREEN -->
+<div class="screen" id="screen-flashcard">
+  <div class="fc-header">
+    <button class="back-btn" onclick="showScreen('home')">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Back
+    </button>
+    <h2 id="fc-chapter-title">All Chapters</h2>
+  </div>
+  <select class="fc-chapter-select" id="fc-chapter-select" onchange="changeFlashcardChapter()">
+    <option value="-1">All Chapters (174 terms)</option>
+    <option value="0">Chapter 1 — Security Principles (57)</option>
+    <option value="1">Chapter 2 — Incident Response, BC &amp; DR (17)</option>
+    <option value="2">Chapter 3 — Access Control Concepts (28)</option>
+    <option value="3">Chapter 4 — Network Security (38)</option>
+    <option value="4">Chapter 5 — Security Operations (34)</option>
+  </select>
+  <div class="fc-progress">
+    <span class="fc-count" id="fc-count">1 / 57</span>
+    <div class="fc-bar-wrap"><div class="fc-bar" id="fc-bar" style="width:0%"></div></div>
+  </div>
+  <div class="flashcard-wrap">
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="card-face card-front">
+        <div class="card-label">Definition</div>
+        <div class="card-term" id="fc-term">Loading...</div>
+        <div class="card-speak-row">
+          <button class="speak-btn" id="speak-front-btn" onclick="event.stopPropagation(); speakText(document.getElementById('fc-term').textContent, this)" title="Read aloud">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          </button>
+          <div class="card-hint">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 10 20 15 15 20"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg>
+            tap card to reveal
+          </div>
+        </div>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-label">Answer</div>
+        <div class="card-answer" id="fc-answer">Loading...</div>
+        <div class="card-speak-row">
+          <button class="speak-btn" id="speak-back-btn" onclick="event.stopPropagation(); speakText(document.getElementById('fc-answer').textContent, this)" title="Read aloud">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fc-controls">
+    <button class="fc-btn prev" onclick="prevCard()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Prev
+    </button>
+    <button class="fc-flip-btn" onclick="flipCard()">Flip Card</button>
+    <button class="fc-btn next" onclick="nextCard()">
+      Next
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+  <div class="fc-shuffle">
+    <button class="fc-btn" onclick="shuffleCards()" style="font-size:0.73rem">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+      Shuffle
+    </button>
+    <button class="fc-btn" onclick="resetCards()" style="font-size:0.73rem">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
+      Reset
+    </button>
+  </div>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div class="screen" id="screen-quiz">
+  <div class="quiz-setup-wrap" id="quiz-setup">
+    <div class="fc-header">
+      <button class="back-btn" onclick="showScreen('home')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+      <h2>Quiz Setup</h2>
+    </div>
+    <div class="quiz-setup">
+      <h2>Test Your Knowledge</h2>
+      <p>Configure your quiz settings and challenge yourself with multiple-choice questions.</p>
+      <div class="setup-options">
+        <div class="setup-row">
+          <label>Chapter</label>
+          <select id="quiz-chapter">
+            <option value="-1">All Chapters</option>
+            <option value="0">Chapter 1 — Security Principles</option>
+            <option value="1">Chapter 2 — Incident Response, BC &amp; DR</option>
+            <option value="2">Chapter 3 — Access Control Concepts</option>
+            <option value="3">Chapter 4 — Network Security</option>
+            <option value="4">Chapter 5 — Security Operations</option>
+          </select>
+        </div>
+        <div class="setup-row">
+          <label>Number of Questions</label>
+          <select id="quiz-count">
+            <option value="5">5 questions</option>
+            <option value="10" selected>10 questions</option>
+            <option value="20">20 questions</option>
+            <option value="30">30 questions</option>
+            <option value="all">All available</option>
+          </select>
+        </div>
+        <div class="setup-row">
+          <label>Mode</label>
+          <select id="quiz-mode">
+            <option value="term">Definition → Term</option>
+            <option value="def">Term → Definition</option>
+          </select>
+        </div>
+      </div>
+      <button class="start-quiz-btn" onclick="startQuiz()">
+        Start Quiz
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="quiz-active" id="quiz-active">
+    <div class="fc-header">
+      <button class="back-btn" onclick="endQuiz()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Exit
+      </button>
+      <h2 id="q-chapter-label">Quiz</h2>
+      <span class="q-num" id="q-num">1 / 10</span>
+    </div>
+    <div class="q-progress-bar"><div class="q-progress-fill" id="q-progress-fill" style="width:0%"></div></div>
+    <div class="q-card">
+      <div class="q-card-top">
+        <div class="q-badge" id="q-badge">Question 1</div>
+        <button class="speak-btn" id="speak-question-btn" onclick="speakText(document.getElementById('q-text').textContent, this)" title="Read question aloud" style="width:28px;height:28px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        </button>
+      </div>
+      <div class="q-text" id="q-text">Loading...</div>
+    </div>
+    <div class="options-grid" id="options-grid"></div>
+    <div class="q-feedback" id="q-feedback"></div>
+    <button class="next-q-btn" id="next-q-btn" onclick="nextQuestion()" style="display:none">
+      Next Question
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+
+  <div class="quiz-active" id="quiz-results">
+    <div class="fc-header">
+      <button class="back-btn" onclick="endQuiz()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Setup
+      </button>
+      <h2>Quiz Results</h2>
+    </div>
+    <div class="results-card">
+      <div class="score-ring">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#1e2535" stroke-width="9"/>
+          <circle id="score-circle" cx="60" cy="60" r="50" fill="none" stroke="url(#grad)" stroke-width="9" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314"/>
+          <defs>
+            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#4f8ef7"/>
+              <stop offset="100%" stop-color="#9b72f8"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="score-text">
+          <div class="score-num" id="score-pct">0%</div>
+          <div class="score-label">Score</div>
+        </div>
+      </div>
+      <div class="score-verdict" id="score-verdict">Good job!</div>
+      <div class="score-sub" id="score-sub"></div>
+    </div>
+    <div class="results-stats">
+      <div class="stat-card">
+        <div class="stat-num correct-color" id="r-correct">0</div>
+        <div class="stat-lbl">Correct</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num wrong-color" id="r-wrong">0</div>
+        <div class="stat-lbl">Wrong</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="r-total">0</div>
+        <div class="stat-lbl">Total</div>
+      </div>
+    </div>
+    <div class="results-actions">
+      <button class="res-btn" onclick="endQuiz()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+        Change Settings
+      </button>
+      <button class="res-btn primary" onclick="retakeQuiz()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
+        Retake Quiz
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEW SCREEN -->
+<div class="screen" id="screen-review">
+  <div class="fc-header">
+    <button class="back-btn" onclick="showScreen('home')">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Back
+    </button>
+    <h2>Full Glossary</h2>
+  </div>
+  <div class="review-controls">
+    <div class="review-search-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="review-search" type="text" id="review-search" placeholder="Search terms or definitions..." oninput="filterReview()">
+    </div>
+    <select class="review-filter" id="review-chapter-filter" onchange="filterReview()">
+      <option value="-1">All Chapters</option>
+      <option value="0">Chapter 1</option>
+      <option value="1">Chapter 2</option>
+      <option value="2">Chapter 3</option>
+      <option value="3">Chapter 4</option>
+      <option value="4">Chapter 5</option>
+    </select>
+    <button class="play-all-btn" id="play-all-btn" onclick="togglePlayAll()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="play-all-icon"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <span id="play-all-label">Play All</span>
+    </button>
+  </div>
+  <div class="review-grid" id="review-grid"></div>
+</div>
+
+<script>
+// ---- TEXT TO SPEECH ----
+let currentUtterance = null;
+let currentSpeakBtn = null;
+let femaleVoice = null;
+
+// Load voices and pick the best female English voice
+function loadFemaleVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices.length) return;
+  // Priority: name contains 'female', or common female voice names
+  const femaleKeywords = ['female', 'woman', 'girl', 'zira', 'susan', 'karen', 'victoria',
+    'samantha', 'moira', 'fiona', 'tessa', 'veena', 'allison', 'ava', 'kate', 'serena'];
+  // First pass: explicit female keyword in name
+  let pick = voices.find(v => femaleKeywords.some(k => v.name.toLowerCase().includes(k)) && v.lang.startsWith('en'));
+  // Second pass: any English voice that isn't obviously male
+  if (!pick) {
+    const maleKeywords = ['male', 'man', 'guy', 'daniel', 'david', 'james', 'alex', 'fred', 'bruce', 'tom', 'ralph', 'jorge'];
+    pick = voices.find(v => v.lang.startsWith('en') && !maleKeywords.some(k => v.name.toLowerCase().includes(k)));
+  }
+  // Fallback: first English voice
+  if (!pick) pick = voices.find(v => v.lang.startsWith('en'));
+  femaleVoice = pick || null;
+}
+
+window.speechSynthesis.onvoiceschanged = loadFemaleVoice;
+loadFemaleVoice();
+
+// Play All state
+let playAllQueue = [];
+let playAllIndex = 0;
+let isPlayingAll = false;
+
+function applyFemaleVoice(utterance) {
+  if (!femaleVoice) loadFemaleVoice();
+  if (femaleVoice) utterance.voice = femaleVoice;
+  utterance.rate = 0.9;
+  utterance.pitch = 1.1;
+  utterance.volume = 1;
+}
+
+function speakText(text, btn) {
+  // If already speaking this button, stop
+  if (currentSpeakBtn === btn && window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+    stopSpeaking();
+    return;
+  }
+  // Stop any existing speech / play-all
+  stopPlayAll();
+  if (!text || !text.trim()) return;
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  applyFemaleVoice(utterance);
+
+  currentUtterance = utterance;
+  currentSpeakBtn = btn;
+  if (btn) btn.classList.add('speaking');
+
+  // Show toast
+  const toast = document.getElementById('tts-toast');
+  const toastText = document.getElementById('tts-toast-text');
+  const progressEl = document.getElementById('tts-progress');
+  const shortText = text.length > 40 ? text.substring(0, 40) + '...' : text;
+  toastText.textContent = shortText;
+  progressEl.style.display = 'none';
+  toast.classList.remove('play-all-mode');
+  toast.classList.add('visible');
+
+  utterance.onend = () => { stopSpeaking(); };
+  utterance.onerror = () => { stopSpeaking(); };
+
+  window.speechSynthesis.speak(utterance);
+}
+
+function stopSpeaking() {
+  if (currentSpeakBtn) {
+    currentSpeakBtn.classList.remove('speaking');
+    currentSpeakBtn = null;
+  }
+  currentUtterance = null;
+  const toast = document.getElementById('tts-toast');
+  toast.classList.remove('visible');
+}
+
+// Stop speech on screen change
+function stopAllSpeech() {
+  stopPlayAll();
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+  }
+  stopSpeaking();
+}
+
+// ---- PLAY ALL ----
+function togglePlayAll() {
+  if (isPlayingAll) {
+    stopPlayAll();
+  } else {
+    startPlayAll();
+  }
+}
+
+function startPlayAll() {
+  // Build queue from current filtered review items
+  const q = document.getElementById('review-search').value.toLowerCase();
+  const ch = parseInt(document.getElementById('review-chapter-filter').value);
+  const filtered = DATA.filter(item => {
+    const matchCh = ch === -1 || item.ch === ch;
+    const matchQ = !q || item.term.toLowerCase().includes(q) || item.def.toLowerCase().includes(q);
+    return matchCh && matchQ;
+  });
+
+  if (filtered.length === 0) return;
+
+  // Stop anything already playing
+  if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+  stopSpeaking();
+
+  playAllQueue = filtered.map(item => item.term + '. ' + item.def);
+  playAllIndex = 0;
+  isPlayingAll = true;
+
+  // Update Play All button
+  setPlayAllButtonState(true);
+
+  // Show toast in play-all mode
+  const toast = document.getElementById('tts-toast');
+  toast.classList.add('visible', 'play-all-mode');
+
+  playAllNext();
+}
+
+function playAllNext() {
+  if (!isPlayingAll || playAllIndex >= playAllQueue.length) {
+    stopPlayAll();
+    return;
+  }
+
+  const text = playAllQueue[playAllIndex];
+  const total = playAllQueue.length;
+  const current = playAllIndex + 1;
+
+  // Update toast
+  const toastText = document.getElementById('tts-toast-text');
+  const progressEl = document.getElementById('tts-progress');
+  const shortText = text.length > 35 ? text.substring(0, 35) + '...' : text;
+  toastText.textContent = shortText;
+  progressEl.textContent = current + '/' + total;
+  progressEl.style.display = 'inline';
+
+  // Highlight the currently speaking review item
+  highlightReviewItem(playAllIndex);
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  applyFemaleVoice(utterance);
+  currentUtterance = utterance;
+
+  utterance.onend = () => {
+    if (!isPlayingAll) return;
+    playAllIndex++;
+    // Small pause between items
+    setTimeout(() => { if (isPlayingAll) playAllNext(); }, 400);
+  };
+  utterance.onerror = () => {
+    if (!isPlayingAll) return;
+    playAllIndex++;
+    setTimeout(() => { if (isPlayingAll) playAllNext(); }, 400);
+  };
+
+  window.speechSynthesis.speak(utterance);
+}
+
+function stopPlayAll() {
+  if (!isPlayingAll && !window.speechSynthesis.speaking) return;
+  isPlayingAll = false;
+  playAllQueue = [];
+  playAllIndex = 0;
+  if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+  currentUtterance = null;
+  setPlayAllButtonState(false);
+  clearReviewHighlight();
+  const toast = document.getElementById('tts-toast');
+  toast.classList.remove('visible', 'play-all-mode');
+  const progressEl = document.getElementById('tts-progress');
+  progressEl.style.display = 'none';
+}
+
+function setPlayAllButtonState(playing) {
+  const btn = document.getElementById('play-all-btn');
+  const label = document.getElementById('play-all-label');
+  const icon = document.getElementById('play-all-icon');
+  if (!btn) return;
+  if (playing) {
+    btn.classList.add('playing');
+    label.textContent = 'Stop';
+    icon.innerHTML = '<rect x="3" y="3" width="18" height="18" rx="2" fill="currentColor" stroke="none"/>';
+  } else {
+    btn.classList.remove('playing');
+    label.textContent = 'Play All';
+    icon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+  }
+}
+
+function highlightReviewItem(index) {
+  clearReviewHighlight();
+  const items = document.querySelectorAll('.review-item');
+  if (items[index]) {
+    items[index].style.borderColor = 'rgba(79,142,247,0.5)';
+    items[index].style.background = 'rgba(79,142,247,0.05)';
+    items[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function clearReviewHighlight() {
+  document.querySelectorAll('.review-item').forEach(el => {
+    el.style.borderColor = '';
+    el.style.background = '';
+  });
+}
+
+const CHAPTERS = [
+  { name: "Security Principles", color: "#4f8ef7", bg: "rgba(79,142,247,0.12)" },
+  { name: "Incident Response, BC & DR", color: "#9b72f8", bg: "rgba(155,114,248,0.12)" },
+  { name: "Access Control Concepts", color: "#2dd4a0", bg: "rgba(45,212,160,0.12)" },
+  { name: "Network Security", color: "#f5a623", bg: "rgba(245,166,35,0.12)" },
+  { name: "Security Operations", color: "#f06464", bg: "rgba(240,100,100,0.12)" },
+];
+
+const DATA = [
+  // CHAPTER 1
+  { ch: 0, term: "Adequate Security", def: "Security commensurate with the risk and the magnitude of harm resulting from the loss, misuse or unauthorized access to or modification of information." },
+  { ch: 0, term: "Administrative Controls", def: "Controls implemented through policy and procedures. Examples include access control processes and requiring multiple personnel to conduct a specific operation." },
+  { ch: 0, term: "Artificial Intelligence", def: "The ability of computers and robots to simulate human intelligence and behavior." },
+  { ch: 0, term: "Asset", def: "Anything of value that is owned by an organization. Assets include both tangible items such as information systems and physical property and intangible assets such as intellectual property." },
+  { ch: 0, term: "Authentication", def: "Access control process validating that the identity being claimed by a user or entity is known to the system, by comparing one or more factors of identification." },
+  { ch: 0, term: "Authorization", def: "The right or a permission that is granted to a system entity to access a system resource." },
+  { ch: 0, term: "Availability", def: "Ensuring timely and reliable access to and use of information by authorized users." },
+  { ch: 0, term: "Baseline", def: "A documented, lowest level of security configuration allowed by a standard or organization." },
+  { ch: 0, term: "Biometric", def: "Biological characteristics of an individual, such as a fingerprint, hand geometry, voice, or iris patterns." },
+  { ch: 0, term: "Bot", def: "Malicious code that acts like a remotely controlled 'robot' for an attacker, with other Trojan and worm capabilities." },
+  { ch: 0, term: "Classified or Sensitive Information", def: "Information that has been determined to require protection against unauthorized disclosure and is marked to indicate its classified status and classification level when in documentary form." },
+  { ch: 0, term: "Confidentiality", def: "The characteristic of data or information when it is not made available or disclosed to unauthorized persons or processes." },
+  { ch: 0, term: "Criticality", def: "A measure of the degree to which an organization depends on the information or information system for the success of a mission or of a business function." },
+  { ch: 0, term: "Data Integrity", def: "The property that data has not been altered in an unauthorized manner. Data integrity covers data in storage, during processing and while in transit." },
+  { ch: 0, term: "Encryption", def: "The process and act of converting the message from its plaintext to ciphertext. Sometimes it is also referred to as enciphering." },
+  { ch: 0, term: "General Data Protection Regulation (GDPR)", def: "In 2016, the European Union passed comprehensive legislation that addresses personal privacy, deeming it an individual human right." },
+  { ch: 0, term: "Governance", def: "The process of how an organization is managed; usually includes all aspects of how decisions are made for that organization, such as policies, roles, and procedures." },
+  { ch: 0, term: "Health Insurance Portability and Accountability Act (HIPAA)", def: "This U.S. federal law is the most important healthcare information regulation in the United States. It directs the adoption of national standards for electronic healthcare transactions while protecting the privacy of individual's health information." },
+  { ch: 0, term: "Impact", def: "The magnitude of harm that could be caused by a threat's exercise of a vulnerability." },
+  { ch: 0, term: "Information Security Risk", def: "The potential adverse impacts to an organization's operations, assets, individuals, other organizations, and even the nation, which results from the possibility of unauthorized access, use, disclosure, disruption, modification or destruction of information and/or information systems." },
+  { ch: 0, term: "Integrity", def: "The property of information whereby it is recorded, used and maintained in a way that ensures its completeness, accuracy, internal consistency and usefulness for a stated purpose." },
+  { ch: 0, term: "International Organization of Standards (ISO)", def: "The ISO develops voluntary international standards in collaboration with its partners in international standardization, particularly in the field of information and communication technologies." },
+  { ch: 0, term: "Internet Engineering Task Force (IETF)", def: "The internet standards organization, made up of network designers, operators, vendors and researchers, that defines protocol standards (e.g., IP, TCP, DNS) through a process of collaboration and consensus." },
+  { ch: 0, term: "Likelihood", def: "The probability that a potential vulnerability may be exercised within the construct of the associated threat environment." },
+  { ch: 0, term: "Likelihood of Occurrence", def: "A weighted factor based on a subjective analysis of the probability that a given threat is capable of exploiting a given vulnerability or set of vulnerabilities." },
+  { ch: 0, term: "Multi-Factor Authentication", def: "Using two or more distinct instances of the three factors of authentication (something you know, something you have, something you are) for identity verification." },
+  { ch: 0, term: "National Institutes of Standards and Technology (NIST)", def: "Part of the U.S. Department of Commerce that sets standards in a number of areas, including information security within the Computer Security Resource Center." },
+  { ch: 0, term: "Non-repudiation", def: "The inability to deny taking an action such as creating information, approving information and sending or receiving a message." },
+  { ch: 0, term: "Personally Identifiable Information (PII)", def: "Any information about an individual maintained by an agency that can be used to distinguish or trace an individual's identity, or any other information that is linked or linkable to an individual." },
+  { ch: 0, term: "Physical Controls", def: "Controls implemented through a tangible mechanism. Examples include walls, fences, guards, locks, etc." },
+  { ch: 0, term: "Privacy", def: "The right of an individual to control the distribution of information about themselves." },
+  { ch: 0, term: "Probability", def: "The chances, or likelihood, that a given threat is capable of exploiting a given vulnerability or a set of vulnerabilities." },
+  { ch: 0, term: "Protected Health Information (PHI)", def: "Information regarding health status, the provision of healthcare or payment for healthcare as defined in HIPAA." },
+  { ch: 0, term: "Qualitative Risk Analysis", def: "A method for risk analysis that is based on the assignment of a descriptor such as low, medium or high." },
+  { ch: 0, term: "Quantitative Risk Analysis", def: "A method for risk analysis where numerical values are assigned to both impact and likelihood based on statistical probabilities and monetarized valuation of loss or gain." },
+  { ch: 0, term: "Risk", def: "A possible event which can have a negative impact upon the organization." },
+  { ch: 0, term: "Risk Acceptance", def: "Determining that the potential benefits of a business function outweigh the possible risk impact/likelihood and performing that business function with no other action." },
+  { ch: 0, term: "Risk Assessment", def: "The process of identifying and analyzing risks to organizational operations, organizational assets, individuals and other organizations, incorporating threat and vulnerability analyses." },
+  { ch: 0, term: "Risk Avoidance", def: "Determining that the impact and/or likelihood of a specific risk is too great to be offset by the potential benefits and not performing a certain business function because of that determination." },
+  { ch: 0, term: "Risk Management", def: "The process of identifying, evaluating and controlling threats, including all the phases of risk context, risk assessment, risk treatment and risk monitoring." },
+  { ch: 0, term: "Risk Management Framework", def: "A structured approach used to oversee and manage risk for an enterprise." },
+  { ch: 0, term: "Risk Mitigation", def: "Putting security controls in place to reduce the possible impact and/or likelihood of a specific risk." },
+  { ch: 0, term: "Risk Tolerance", def: "The level of risk an entity is willing to assume in order to achieve a potential desired result. Also called risk threshold, risk appetite, and acceptable risk." },
+  { ch: 0, term: "Risk Transference", def: "Paying an external party to accept the financial impact of a given risk." },
+  { ch: 0, term: "Risk Treatment", def: "The determination of the best way to address an identified risk." },
+  { ch: 0, term: "Security Controls", def: "The management, operational and technical controls prescribed for an information system to protect the confidentiality, integrity and availability of the system and its information." },
+  { ch: 0, term: "Sensitivity", def: "A measure of the importance assigned to information by its owner, for the purpose of denoting its need for protection." },
+  { ch: 0, term: "Single-Factor Authentication", def: "Use of just one of the three available factors (something you know, something you have, something you are) to carry out the authentication process being requested." },
+  { ch: 0, term: "State", def: "The condition an entity is in at a point in time." },
+  { ch: 0, term: "System Integrity", def: "The quality that a system has when it performs its intended function in an unimpaired manner, free from unauthorized manipulation of the system, whether intentional or accidental." },
+  { ch: 0, term: "Technical Controls", def: "Security controls for an information system that are primarily implemented and executed by the information system through mechanisms contained in the hardware, software or firmware components of the system." },
+  { ch: 0, term: "Threat", def: "Any circumstance or event with the potential to adversely impact organizational operations, organizational assets, individuals, or other organizations through an information system via unauthorized access, destruction, disclosure, modification of information and/or denial of service." },
+  { ch: 0, term: "Threat Actor", def: "An individual or a group that attempts to exploit vulnerabilities to cause or force a threat to occur." },
+  { ch: 0, term: "Threat Vector", def: "The means by which a threat actor carries out their objectives." },
+  { ch: 0, term: "Token", def: "A physical object a user possesses and controls that is used to authenticate the user's identity." },
+  { ch: 0, term: "Vulnerability", def: "Weakness in an information system, system security procedures, internal controls or implementation that could be exploited by a threat source." },
+  { ch: 0, term: "Institute of Electrical and Electronics Engineers (IEEE)", def: "A professional organization that sets standards for telecommunications, computer engineering and similar disciplines." },
+  // CHAPTER 2
+  { ch: 1, term: "Adverse Events", def: "Events with a negative consequence, such as system crashes, network packet floods, unauthorized use of system privileges, defacement of a web page or execution of malicious code that destroys data." },
+  { ch: 1, term: "Breach", def: "The loss of control, compromise, unauthorized disclosure, unauthorized acquisition or any similar occurrence where a person other than an authorized user accesses or potentially accesses personally identifiable information." },
+  { ch: 1, term: "Business Continuity (BC)", def: "Actions, processes and tools for ensuring an organization can continue critical operations during a contingency." },
+  { ch: 1, term: "Business Continuity Plan (BCP)", def: "The documentation of a predetermined set of instructions or procedures that describe how an organization's mission/business processes will be sustained during and after a significant disruption." },
+  { ch: 1, term: "Business Impact Analysis (BIA)", def: "An analysis of an information system's requirements, functions, and interdependencies used to characterize system contingency requirements and priorities in the event of a significant disruption." },
+  { ch: 1, term: "Disaster Recovery (DR)", def: "In information systems terms, the activities necessary to restore IT and communications services to an organization during and after an outage, disruption or disturbance of any kind or scale." },
+  { ch: 1, term: "Disaster Recovery Plan (DRP)", def: "The processes, policies and procedures related to preparing for recovery or continuation of an organization's critical business functions, technology infrastructure, systems and applications after the organization experiences a disaster." },
+  { ch: 1, term: "Event", def: "Any observable occurrence in a network or system." },
+  { ch: 1, term: "Exploit", def: "A particular attack named this way because these attacks exploit system vulnerabilities." },
+  { ch: 1, term: "Incident", def: "An event that actually or potentially jeopardizes the confidentiality, integrity or availability of an information system or the information the system processes, stores or transmits." },
+  { ch: 1, term: "Incident Handling", def: "The mitigation of violations of security policies and recommended practices." },
+  { ch: 1, term: "Incident Response (IR)", def: "The mitigation of violations of security policies and recommended practices." },
+  { ch: 1, term: "Incident Response Plan (IRP)", def: "The documentation of a predetermined set of instructions or procedures to detect, respond to and limit consequences of a malicious cyberattack against an organization's information systems." },
+  { ch: 1, term: "Intrusion", def: "A security event, or combination of security events, that constitutes a security incident in which an intruder gains, or attempts to gain, access to a system or system resource without authorization." },
+  { ch: 1, term: "Security Operations Center (SOC)", def: "A centralized organizational function fulfilled by an information security team that monitors, detects and analyzes events on the network or system to prevent and resolve issues before they result in business disruptions." },
+  { ch: 1, term: "Vulnerability (Ch2)", def: "Weakness in an information system, system security procedures, internal controls or implementation that could be exploited or triggered by a threat source." },
+  { ch: 1, term: "Zero Day", def: "A previously unknown system vulnerability with the potential of exploitation without risk of detection or prevention because it does not, in general, fit recognized patterns, signatures or methods." },
+  // CHAPTER 3
+  { ch: 2, term: "Audit", def: "Independent review and examination of records and activities to assess the adequacy of system controls, to ensure compliance with established policies and operational procedures." },
+  { ch: 2, term: "Crime Prevention through Environmental Design (CPTED)", def: "An architectural approach to the design of buildings and spaces which emphasizes passive features to reduce the likelihood of criminal activity." },
+  { ch: 2, term: "Defense in Depth", def: "Information security strategy integrating people, technology, and operations capabilities to establish variable barriers across multiple layers and missions of the organization." },
+  { ch: 2, term: "Discretionary Access Control (DAC)", def: "A certain amount of access control is left to the discretion of the object's owner, or anyone else who is authorized to control the object's access. The owner can determine who should have access rights to an object and what those rights should be." },
+  { ch: 2, term: "Encrypt", def: "To protect private information by putting it into a form that can only be read by people who have permission to do so." },
+  { ch: 2, term: "Firewalls", def: "Devices that enforce administrative security policies by filtering incoming traffic based on a set of rules." },
+  { ch: 2, term: "Insider Threat", def: "An entity with authorized access that has the potential to harm an information system through destruction, disclosure, modification of data, and/or denial of service." },
+  { ch: 2, term: "iOS", def: "An operating system manufactured by Apple Inc. Used for mobile devices." },
+  { ch: 2, term: "Layered Defense", def: "The use of multiple controls arranged in series to provide several consecutive controls to protect an asset; also called defense in depth." },
+  { ch: 2, term: "Linux", def: "An operating system that is open source, making its source code legally available to end users." },
+  { ch: 2, term: "Log Anomaly", def: "A system irregularity that is identified when studying log entries which could represent events of interest for further surveillance." },
+  { ch: 2, term: "Logging", def: "Collecting and storing user activities in a log, which is a record of the events occurring within an organization's systems and networks." },
+  { ch: 2, term: "Logical Access Control Systems", def: "An automated system that controls an individual's ability to access one or more computer system resources, requiring the validation of an individual's identity through some mechanism, such as a PIN, card, biometric or other token." },
+  { ch: 2, term: "Mandatory Access Control", def: "Access control that requires the system itself to manage access controls in accordance with the organization's security policies." },
+  { ch: 2, term: "Mantrap", def: "An entrance to a building or an area that requires people to pass through two doors with only one door opened at a time." },
+  { ch: 2, term: "Object", def: "Passive information system-related entity (e.g., devices, files, records, tables, processes, programs, domains) containing or receiving information. Access to an object implies access to the information it contains." },
+  { ch: 2, term: "Physical Access Controls", def: "Controls implemented through a tangible mechanism. Examples include walls, fences, guards, locks, etc." },
+  { ch: 2, term: "Principle of Least Privilege", def: "The principle that users and programs should have only the minimum privileges necessary to complete their tasks." },
+  { ch: 2, term: "Privileged Account", def: "An information system account with approved authorizations of a privileged user." },
+  { ch: 2, term: "Ransomware", def: "A type of malicious software that locks the computer screen or files, thus preventing or limiting a user from accessing their system and data until money is paid." },
+  { ch: 2, term: "Role-based Access Control (RBAC)", def: "An access control system that sets up user permissions based on roles." },
+  { ch: 2, term: "Rule", def: "An instruction developed to allow or deny access to a system by comparing the validated identity of the subject to an access control list." },
+  { ch: 2, term: "Segregation of Duties", def: "The practice of ensuring that an organizational process cannot be completed by a single person; forces collusion as a means to reduce insider threats. Also known as Separation of Duties." },
+  { ch: 2, term: "Subject", def: "Generally an individual, process or device causing information to flow among objects or change to the system state." },
+  { ch: 2, term: "Technical Controls (Ch3)", def: "The security controls for an information system that are primarily implemented and executed by the information system through mechanisms contained in the hardware, software or firmware components of the system." },
+  { ch: 2, term: "Turnstile", def: "A one-way spinning door or barrier that allows only one person at a time to enter a building or pass through an area." },
+  { ch: 2, term: "Unix", def: "An operating system used in software development." },
+  { ch: 2, term: "User Provisioning", def: "The process of creating, maintaining and deactivating user identities on a system." },
+  // CHAPTER 4
+  { ch: 3, term: "Application Programming Interface (API)", def: "A set of routines, standards, protocols, and tools for building software applications to access a web-based software application or web tool." },
+  { ch: 3, term: "Bit", def: "The most essential representation of data (zero or one) at Layer 1 of the Open Systems Interconnection (OSI) model." },
+  { ch: 3, term: "Broadcast", def: "Broadcast transmission is a one-to-many (one-to-everyone) form of sending internet traffic." },
+  { ch: 3, term: "Byte", def: "A unit of digital information that most commonly consists of eight bits." },
+  { ch: 3, term: "Cloud Computing", def: "A model for enabling ubiquitous, convenient, on-demand network access to a shared pool of configurable computing resources that can be rapidly provisioned and released with minimal management effort or service provider interaction." },
+  { ch: 3, term: "Community Cloud", def: "A system in which the cloud infrastructure is provisioned for exclusive use by a specific community of consumers from organizations that have shared concerns (e.g., mission, security requirements, policy and compliance considerations)." },
+  { ch: 3, term: "De-encapsulation", def: "The opposite process of encapsulation, in which bundles of data are unpacked or revealed." },
+  { ch: 3, term: "Denial-of-Service (DoS)", def: "The prevention of authorized access to resources or the delaying of time-critical operations." },
+  { ch: 3, term: "Domain Name Service (DNS)", def: "This acronym can be applied to three interrelated elements: a service, a physical server and a network protocol." },
+  { ch: 3, term: "Encapsulation", def: "Enforcement of data hiding and code hiding during all phases of software development and operational use. Bundling together data and methods; also used to refer to taking any set of data and packaging it or hiding it in another data structure." },
+  { ch: 3, term: "Encryption (Ch4)", def: "The process and act of converting the message from its plaintext to ciphertext. Sometimes it is also referred to as enciphering." },
+  { ch: 3, term: "File Transfer Protocol (FTP)", def: "The internet protocol (and program) used to transfer files between hosts." },
+  { ch: 3, term: "Fragment Attack", def: "An attack in which an attacker fragments traffic in such a way that a system is unable to put data packets back together." },
+  { ch: 3, term: "Hardware", def: "The physical parts of a computer and related devices." },
+  { ch: 3, term: "Hybrid Cloud", def: "A combination of public cloud storage and private cloud storage where some critical data resides in the enterprise's private cloud while other data is stored and accessible from a public cloud storage provider." },
+  { ch: 3, term: "Infrastructure as a Service (IaaS)", def: "The provider of the core computing, storage and network hardware and software that is the foundation upon which organizations can build and then deploy applications, usually billed on usage." },
+  { ch: 3, term: "Internet Control Message Protocol (ICMP)", def: "An IP network protocol standardized by the IETF through RFC 792 to determine if a particular service or host is available." },
+  { ch: 3, term: "Internet Protocol (IPv4)", def: "Standard protocol for transmission of data from source to destinations in packet-switched communications networks and interconnected systems of such networks." },
+  { ch: 3, term: "Man-in-the-Middle", def: "An attack where the adversary positions himself in between the user and the system so that he can intercept and alter data traveling between them." },
+  { ch: 3, term: "Microsegmentation", def: "Part of a zero-trust strategy that breaks LANs into very small, highly localized zones using firewalls or similar technologies. At the limit, this places firewall at every connection point." },
+  { ch: 3, term: "Oversized Packet Attack", def: "Purposely sending a network packet that is larger than expected or larger than can be handled by the receiving system, causing the receiving system to fail unexpectedly." },
+  { ch: 3, term: "Packet", def: "Representation of data at Layer 3 of the Open Systems Interconnection (OSI) model." },
+  { ch: 3, term: "Payload", def: "The primary action of a malicious code attack." },
+  { ch: 3, term: "Payment Card Industry Data Security Standard (PCI DSS)", def: "An information security standard administered by the Payment Card Industry Security Standards Council that applies to merchants and service providers who process credit or debit card transactions." },
+  { ch: 3, term: "Platform as a Service (PaaS)", def: "The web-authoring or application development middleware environment that allows applications to be built in the cloud before they're deployed as SaaS assets." },
+  { ch: 3, term: "Private Cloud", def: "A cloud computing platform that is implemented within the corporate firewall, under the control of the IT department, designed to offer the same features and benefits of cloud systems." },
+  { ch: 3, term: "Protocols", def: "A set of rules (formats and procedures) to implement and control some type of association (communication) between systems." },
+  { ch: 3, term: "Public Cloud", def: "Cloud infrastructure provisioned for open use by the general public, which may be owned, managed, and operated by a business, academic, or government organization." },
+  { ch: 3, term: "Simple Mail Transport Protocol (SMTP)", def: "The standard communication protocol for sending and receiving emails between senders and receivers." },
+  { ch: 3, term: "Software", def: "Computer programs and associated data that may be dynamically written or modified during execution." },
+  { ch: 3, term: "Software as a Service (SaaS)", def: "The cloud customer uses the cloud provider's applications running within a cloud infrastructure, accessible from various client devices through a thin client interface such as a web browser." },
+  { ch: 3, term: "Spoofing", def: "Faking the sending address of a transmission to gain illegal entry into a secure system." },
+  { ch: 3, term: "TCP/IP Model", def: "Internetworking protocol model created by the IETF, which specifies four layers of functionality: Link layer, Internet Layer, Transport Layer, and Application Layer." },
+  { ch: 3, term: "VLAN", def: "A virtual local area network — a logical group of workstations, servers, and network devices that appear to be on the same LAN despite their geographical distribution." },
+  { ch: 3, term: "VPN", def: "A virtual private network, built on top of existing networks, that can provide a secure communications mechanism for transmission between networks." },
+  { ch: 3, term: "WLAN", def: "A wireless area network — a group of computers and devices that are located in the same vicinity, forming a network based on radio transmissions rather than wired connections." },
+  { ch: 3, term: "Zenmap", def: "The graphical user interface (GUI) for the Nmap Security Scanner, an open-source application that scans networks to determine everything that is connected as well as other information." },
+  { ch: 3, term: "Zero Trust", def: "Removing the design belief that the network has any trusted space. Security is managed at each possible level, representing the most granular asset. Microsegmentation of workloads is a tool of the model." },
+  // CHAPTER 5
+  { ch: 4, term: "Application Server", def: "A computer responsible for hosting applications to user workstations." },
+  { ch: 4, term: "Asymmetric Encryption", def: "An algorithm that uses one key to encrypt and a different key to decrypt the input plaintext." },
+  { ch: 4, term: "Checksum", def: "A digit representing the sum of the correct digits in a piece of stored or transmitted digital data, against which later comparisons can be made to detect errors in the data." },
+  { ch: 4, term: "Ciphertext", def: "The altered form of a plaintext message so it is unreadable for anyone except the intended recipients. In other words, it has been turned into a secret." },
+  { ch: 4, term: "Classification", def: "Identifies the degree of harm to the organization, its stakeholders or others that might result if an information asset is divulged to an unauthorized person, process or organization. Focused first and foremost on maintaining the confidentiality of the data." },
+  { ch: 4, term: "Configuration Management", def: "A process and discipline used to ensure that the only changes made to a system are those that have been authorized and validated." },
+  { ch: 4, term: "Cryptanalyst", def: "One who performs cryptanalysis — the study of mathematical techniques for attempting to defeat cryptographic techniques and/or information systems security." },
+  { ch: 4, term: "Cryptography", def: "The study or applications of methods to secure or protect the meaning and content of messages, files, or other information, usually by disguise, obscuration, or other transformations of that content and meaning." },
+  { ch: 4, term: "Data Loss Prevention (DLP)", def: "System capabilities designed to detect and prevent the unauthorized use and transmission of information." },
+  { ch: 4, term: "Decryption", def: "The reverse process from encryption. It is the process of converting a ciphertext message back into plaintext through the use of the cryptographic algorithm and the appropriate key for decryption." },
+  { ch: 4, term: "Degaussing", def: "A technique of erasing data on disk or tape that, when performed properly, ensures that there is insufficient magnetic remanence to reconstruct data." },
+  { ch: 4, term: "Digital Signature", def: "The result of a cryptographic transformation of data which, when properly implemented, provides the services of origin authentication, data integrity, and signer non-repudiation." },
+  { ch: 4, term: "Egress Monitoring", def: "Monitoring of outgoing network traffic." },
+  { ch: 4, term: "Encryption (Ch5)", def: "The process and act of converting the message from its plaintext to ciphertext." },
+  { ch: 4, term: "Encryption System", def: "The total set of algorithms, processes, hardware, software, and procedures that taken together provide an encryption and decryption capability." },
+  { ch: 4, term: "Hardening", def: "A reference to the process of applying secure configurations (to reduce the attack surface) and locking down various hardware, communications systems, and software, normally performed based on industry guidelines and benchmarks such as those provided by CIS." },
+  { ch: 4, term: "Hash Function", def: "An algorithm that computes a numerical value (called the hash value) on a data file or electronic message that is used to represent that file or message and depends on the entire contents of the file or message. Can be considered a fingerprint of the file or message." },
+  { ch: 4, term: "Hashing", def: "The process of using a mathematical algorithm against data to produce a numeric value that is representative of that data." },
+  { ch: 4, term: "Information Sharing", def: "The requirements for information sharing by an IT system with one or more other IT systems or applications, for information sharing to support multiple internal or external organizations, missions, or public programs." },
+  { ch: 4, term: "Ingress Monitoring", def: "Monitoring of incoming network traffic." },
+  { ch: 4, term: "Message Digest", def: "A digital signature that uniquely identifies data and has the property such that changing a single bit in the data will cause a completely different message digest to be generated." },
+  { ch: 4, term: "Operating System", def: "The software 'master control application' that runs the computer. It is the first program loaded when the computer is turned on, and its main component, the kernel, resides in memory at all times." },
+  { ch: 4, term: "Patch", def: "A software component that, when installed, directly modifies files or device settings related to a different software component without changing the version number or release details for the related software component." },
+  { ch: 4, term: "Patch Management", def: "The systematic notification, identification, deployment, installation and verification of operating system and application software code revisions. These revisions are known as patches, hot fixes, and service packs." },
+  { ch: 4, term: "Plaintext", def: "A message or data in its natural format and in readable form; extremely vulnerable from a confidentiality perspective." },
+  { ch: 4, term: "Records", def: "The recordings (automated and/or manual) of evidence of activities performed or results achieved (e.g., forms, reports, test results), which serve as a basis for verifying that the organization and the information system are performing as intended." },
+  { ch: 4, term: "Records Retention", def: "A practice based on the records life cycle, according to which records are retained as long as necessary, and then are destroyed after the appropriate time interval has elapsed." },
+  { ch: 4, term: "Remanence", def: "Residual information remaining on storage media after clearing." },
+  { ch: 4, term: "Request for Change (RFC)", def: "The first stage of change management, wherein a change in procedure or product is sought by a stakeholder." },
+  { ch: 4, term: "Security Governance", def: "The entirety of the policies, roles, and processes the organization uses to make security decisions in an organization." },
+  { ch: 4, term: "Social Engineering", def: "Tactics to infiltrate systems via email, phone, text, or social media, often impersonating a person or agency in authority or offering a gift. A low-tech method would be simply following someone into a secure building." },
+  { ch: 4, term: "Symmetric Encryption", def: "An algorithm that uses the same key in both the encryption and the decryption processes." },
+  { ch: 4, term: "Web Server", def: "A computer that provides World Wide Web (WWW) services on the Internet. It includes the hardware, operating system, Web server software, and Web site content (Web pages)." },
+  { ch: 4, term: "Whaling Attack", def: "Phishing attacks that attempt to trick highly placed officials or private individuals with sizable assets into authorizing large fund wire transfers to previously unknown entities." },
+];
+
+// --- STATE ---
+let fcDeck = [], fcIndex = 0, fcChapter = -1;
+let quizQuestions = [], quizIndex = 0, quizCorrect = 0, quizAnswered = false;
+let lastQuizSettings = {};
+
+// --- NAV ---
+function showScreen(id) {
+  stopAllSpeech();
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  document.getElementById('nav-' + id).classList.add('active');
+  if (id === 'review') renderReview();
+  if (id === 'flashcard') initFlashcards(fcChapter);
+}
+
+// --- FLASHCARDS ---
+function getCards(chapterIndex) {
+  return chapterIndex === -1 ? [...DATA] : DATA.filter(d => d.ch === chapterIndex);
+}
+function startFlashcards(chIdx) {
+  fcChapter = chIdx;
+  document.getElementById('fc-chapter-select').value = chIdx;
+  showScreen('flashcard');
+}
+function initFlashcards(chIdx) {
+  fcChapter = chIdx === undefined ? -1 : chIdx;
+  fcDeck = getCards(fcChapter);
+  fcIndex = 0;
+  renderCard();
+  updateFCChapterTitle();
+}
+function changeFlashcardChapter() {
+  const val = parseInt(document.getElementById('fc-chapter-select').value);
+  initFlashcards(val);
+}
+function updateFCChapterTitle() {
+  const el = document.getElementById('fc-chapter-title');
+  el.textContent = fcChapter === -1 ? 'All Chapters' : 'Chapter ' + (fcChapter + 1) + ' — ' + CHAPTERS[fcChapter].name;
+}
+function renderCard() {
+  stopAllSpeech();
+  const card = document.getElementById('flashcard');
+  card.classList.remove('flipped');
+  const item = fcDeck[fcIndex];
+  document.getElementById('fc-term').textContent = item.def;
+  document.getElementById('fc-answer').textContent = item.term;
+  const count = document.getElementById('fc-count');
+  count.textContent = (fcIndex + 1) + ' / ' + fcDeck.length;
+  const pct = ((fcIndex) / fcDeck.length) * 100;
+  document.getElementById('fc-bar').style.width = pct + '%';
+}
+function flipCard() {
+  document.getElementById('flashcard').classList.toggle('flipped');
+}
+function nextCard() {
+  fcIndex = fcIndex < fcDeck.length - 1 ? fcIndex + 1 : 0;
+  renderCard();
+}
+function prevCard() {
+  fcIndex = fcIndex > 0 ? fcIndex - 1 : fcDeck.length - 1;
+  renderCard();
+}
+function shuffleCards() {
+  for (let i = fcDeck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [fcDeck[i], fcDeck[j]] = [fcDeck[j], fcDeck[i]];
+  }
+  fcIndex = 0;
+  renderCard();
+}
+function resetCards() {
+  fcDeck = getCards(fcChapter);
+  fcIndex = 0;
+  renderCard();
+}
+
+// --- QUIZ ---
+function startQuiz() {
+  const chVal = parseInt(document.getElementById('quiz-chapter').value);
+  const countVal = document.getElementById('quiz-count').value;
+  const modeVal = document.getElementById('quiz-mode').value;
+  lastQuizSettings = { chVal, countVal, modeVal };
+  let pool = chVal === -1 ? [...DATA] : DATA.filter(d => d.ch === chVal);
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  const n = countVal === 'all' ? pool.length : Math.min(parseInt(countVal), pool.length);
+  pool = pool.slice(0, n);
+  quizQuestions = pool.map(item => buildQuestion(item, modeVal, pool));
+  quizIndex = 0;
+  quizCorrect = 0;
+  document.getElementById('quiz-setup').classList.add('hide');
+  document.getElementById('quiz-active').classList.add('show');
+  document.getElementById('quiz-results').classList.remove('show');
+  const chLabel = chVal === -1 ? 'All Chapters' : 'Chapter ' + (chVal + 1);
+  document.getElementById('q-chapter-label').textContent = chLabel + ' Quiz';
+  renderQuestion();
+}
+function buildQuestion(item, mode, pool) {
+  let questionText, correctAnswer;
+  if (mode === 'term') {
+    questionText = item.def;
+    correctAnswer = item.term;
+  } else {
+    questionText = item.term;
+    correctAnswer = item.def;
+  }
+  const wrongs = pool.filter(p => p.term !== item.term);
+  for (let i = wrongs.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [wrongs[i], wrongs[j]] = [wrongs[j], wrongs[i]];
+  }
+  const distractors = wrongs.slice(0, 3).map(w => mode === 'term' ? w.term : w.def);
+  const options = [...distractors, correctAnswer];
+  for (let i = options.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [options[i], options[j]] = [options[j], options[i]];
+  }
+  return { questionText, correctAnswer, options, item };
+}
+function renderQuestion() {
+  stopAllSpeech();
+  const q = quizQuestions[quizIndex];
+  quizAnswered = false;
+  const total = quizQuestions.length;
+  document.getElementById('q-num').textContent = (quizIndex + 1) + ' / ' + total;
+  document.getElementById('q-badge').textContent = 'Question ' + (quizIndex + 1);
+  document.getElementById('q-text').textContent = q.questionText;
+  const pct = (quizIndex / total) * 100;
+  document.getElementById('q-progress-fill').style.width = pct + '%';
+  document.getElementById('q-feedback').classList.remove('show', 'correct', 'wrong');
+  document.getElementById('next-q-btn').style.display = 'none';
+  const isLast = quizIndex >= total - 1;
+  const nextBtn = document.getElementById('next-q-btn');
+  nextBtn.innerHTML = isLast
+    ? 'See Results <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>'
+    : 'Next Question <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span class="opt-text">${opt}</span>`;
+    btn.onclick = () => selectOption(opt, btn);
+    grid.appendChild(btn);
+  });
+}
+function selectOption(chosen, btn) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const q = quizQuestions[quizIndex];
+  const isCorrect = chosen === q.correctAnswer;
+  if (isCorrect) quizCorrect++;
+  const allBtns = document.querySelectorAll('.opt-btn');
+  allBtns.forEach(b => {
+    b.disabled = true;
+    const txt = b.querySelector('.opt-text').textContent;
+    if (txt === q.correctAnswer) b.classList.add('correct');
+    else if (b === btn && !isCorrect) b.classList.add('wrong');
+  });
+  const fb = document.getElementById('q-feedback');
+  fb.classList.add('show');
+  if (isCorrect) {
+    fb.classList.add('correct');
+    fb.innerHTML = '<span class="feedback-correct">Correct.</span> ' + q.item.term + ': ' + q.item.def;
+  } else {
+    fb.classList.add('wrong');
+    fb.innerHTML = '<span class="feedback-wrong">Incorrect.</span> The correct answer is <strong>' + q.correctAnswer + '</strong>. ' + q.item.def;
+  }
+  document.getElementById('next-q-btn').style.display = 'flex';
+}
+function nextQuestion() {
+  if (quizIndex < quizQuestions.length - 1) {
+    quizIndex++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+function showResults() {
+  document.getElementById('quiz-active').classList.remove('show');
+  const results = document.getElementById('quiz-results');
+  results.classList.add('show');
+  const total = quizQuestions.length;
+  const pct = Math.round((quizCorrect / total) * 100);
+  document.getElementById('score-pct').textContent = pct + '%';
+  document.getElementById('r-correct').textContent = quizCorrect;
+  document.getElementById('r-wrong').textContent = total - quizCorrect;
+  document.getElementById('r-total').textContent = total;
+  const verdicts = [
+    [90, 'Excellent!', "Outstanding performance. You're exam-ready."],
+    [75, 'Good Job', 'Solid understanding. Review a few more topics.'],
+    [50, 'Keep Studying', "You're getting there. Practice more flashcards."],
+    [0, 'Keep Going', 'Review the material and try again. You can do it.'],
+  ];
+  const [,v,s] = verdicts.find(([t]) => pct >= t);
+  document.getElementById('score-verdict').textContent = v;
+  document.getElementById('score-sub').textContent = s;
+  const circumference = 314;
+  const offset = circumference - (pct / 100) * circumference;
+  const circle = document.getElementById('score-circle');
+  circle.style.strokeDashoffset = circumference;
+  setTimeout(() => { circle.style.transition = 'stroke-dashoffset 1s ease'; circle.style.strokeDashoffset = offset; }, 100);
+}
+function endQuiz() {
+  document.getElementById('quiz-setup').classList.remove('hide');
+  document.getElementById('quiz-active').classList.remove('show');
+  document.getElementById('quiz-results').classList.remove('show');
+}
+function retakeQuiz() {
+  document.getElementById('quiz-results').classList.remove('show');
+  startQuiz();
+}
+
+// --- REVIEW ---
+const CH_TAG_STYLES = [
+  { color: '#4f8ef7', bg: 'rgba(79,142,247,0.13)' },
+  { color: '#9b72f8', bg: 'rgba(155,114,248,0.13)' },
+  { color: '#2dd4a0', bg: 'rgba(45,212,160,0.13)' },
+  { color: '#f5a623', bg: 'rgba(245,166,35,0.13)' },
+  { color: '#f06464', bg: 'rgba(240,100,100,0.13)' },
+];
+
+const SPEAKER_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;
+
+function renderReview(query = '', chFilter = -1) {
+  const q = document.getElementById('review-search').value.toLowerCase();
+  const ch = parseInt(document.getElementById('review-chapter-filter').value);
+  const filtered = DATA.filter(item => {
+    const matchCh = ch === -1 || item.ch === ch;
+    const matchQ = !q || item.term.toLowerCase().includes(q) || item.def.toLowerCase().includes(q);
+    return matchCh && matchQ;
+  });
+  const grid = document.getElementById('review-grid');
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="empty-state">No matching terms found.</div>';
+    return;
+  }
+  // Build DOM nodes directly to avoid any quote-escaping issues in onclick attributes
+  grid.innerHTML = '';
+  filtered.forEach((item) => {
+    const st = CH_TAG_STYLES[item.ch];
+    const idx = DATA.indexOf(item) + 1;
+    const ttsText = item.term + '. ' + item.def;
+
+    const row = document.createElement('div');
+    row.className = 'review-item';
+
+    const numEl = document.createElement('div');
+    numEl.className = 'review-term';
+    numEl.textContent = '#' + idx;
+
+    const content = document.createElement('div');
+    content.className = 'review-content';
+
+    const tag = document.createElement('span');
+    tag.className = 'ch-tag';
+    tag.style.color = st.color;
+    tag.style.background = st.bg;
+    tag.textContent = 'Ch ' + (item.ch + 1) + ' · ' + CHAPTERS[item.ch].name;
+
+    const answer = document.createElement('div');
+    answer.className = 'review-answer';
+    answer.textContent = item.term;
+
+    const def = document.createElement('div');
+    def.className = 'review-def';
+    def.textContent = item.def;
+
+    content.appendChild(tag);
+    content.appendChild(answer);
+    content.appendChild(def);
+
+    const speakBtn = document.createElement('button');
+    speakBtn.className = 'review-speak-btn';
+    speakBtn.title = 'Read aloud';
+    speakBtn.innerHTML = SPEAKER_SVG;
+    speakBtn.addEventListener('click', function() {
+      speakText(ttsText, speakBtn);
+    });
+
+    row.appendChild(numEl);
+    row.appendChild(content);
+    row.appendChild(speakBtn);
+    grid.appendChild(row);
+  });
+}
+function filterReview() {
+  stopPlayAll();
+  renderReview();
+}
+
+// Init
+initFlashcards(-1);
+renderReview();
+</script>
+</body>
+</html>
