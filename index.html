@@ -187,7 +187,7 @@
   }
   .mode-row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 10px;
     margin-top: 1.25rem;
   }
@@ -871,6 +871,10 @@
       <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       <span>Quiz</span>
     </button>
+    <button class="nav-btn" onclick="showScreen('quiz2')" id="nav-quiz2">
+      <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span>Quiz 2</span>
+    </button>
     <button class="nav-btn" onclick="showScreen('review')" id="nav-review">
       <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
       <span>Review</span>
@@ -907,6 +911,13 @@
       </div>
       <div class="mode-name">Review</div>
       <div class="mode-desc">Browse all definitions by chapter</div>
+    </div>
+    <div class="mode-card" onclick="showScreen('quiz2')">
+      <div class="mode-icon" style="background:rgba(245,166,35,0.15)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f5a623" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      </div>
+      <div class="mode-name">Quiz 2</div>
+      <div class="mode-desc">167 real exam-style MCQ practice questions</div>
     </div>
   </div>
   <div class="section-label">Domains</div>
@@ -1171,7 +1182,425 @@
   <div class="review-grid" id="review-grid"></div>
 </div>
 
+<!-- QUIZ 2 SCREEN -->
+<div class="screen" id="screen-quiz2">
+  <div class="quiz-setup-wrap" id="quiz2-setup">
+    <div class="fc-header">
+      <button class="back-btn" onclick="showScreen('home')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+      <h2>Quiz 2 Setup</h2>
+    </div>
+    <div class="quiz-setup">
+      <h2>Practice Exam</h2>
+      <p>167 real ISC² CC-style multiple-choice questions with 4 answer choices. Test your exam readiness.</p>
+      <div class="setup-options">
+        <div class="setup-row">
+          <label>Number of Questions</label>
+          <select id="quiz2-count">
+            <option value="10" selected>10 questions</option>
+            <option value="20">20 questions</option>
+            <option value="30">30 questions</option>
+            <option value="50">50 questions</option>
+            <option value="all">All 167 questions</option>
+          </select>
+        </div>
+        <div class="setup-row">
+          <label>Order</label>
+          <select id="quiz2-order">
+            <option value="random" selected>Random</option>
+            <option value="sequential">Sequential</option>
+          </select>
+        </div>
+      </div>
+      <button class="start-quiz-btn" onclick="startQuiz2()">
+        Start Practice Exam
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="quiz-active" id="quiz2-active">
+    <div class="fc-header">
+      <button class="back-btn" onclick="endQuiz2()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Exit
+      </button>
+      <h2 id="q2-chapter-label">Practice Exam</h2>
+      <span class="q-num" id="q2-num">1 / 10</span>
+    </div>
+    <div class="q-progress-bar"><div class="q-progress-fill" id="q2-progress-fill" style="width:0%"></div></div>
+    <div class="q-card">
+      <div class="q-card-top">
+        <div class="q-badge" id="q2-badge">Question 1</div>
+        <button class="speak-btn" id="speak-q2-btn" onclick="speakText(document.getElementById('q2-text').textContent, this)" title="Read question aloud" style="width:28px;height:28px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        </button>
+      </div>
+      <div class="q-text" id="q2-text">Loading...</div>
+    </div>
+    <div class="options-grid" id="q2-options-grid"></div>
+    <div class="q-feedback" id="q2-feedback"></div>
+    <button class="next-q-btn" id="next-q2-btn" onclick="nextQuestion2()" style="display:none">
+      Next Question
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+
+  <div class="quiz-active" id="quiz2-results">
+    <div class="fc-header">
+      <button class="back-btn" onclick="endQuiz2()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Setup
+      </button>
+      <h2>Exam Results</h2>
+    </div>
+    <div class="results-card">
+      <div class="score-ring">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#1e2535" stroke-width="9"/>
+          <circle id="score2-circle" cx="60" cy="60" r="50" fill="none" stroke="url(#grad2)" stroke-width="9" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314"/>
+          <defs>
+            <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#f5a623"/>
+              <stop offset="100%" stop-color="#f06464"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="score-text">
+          <div class="score-num" id="score2-pct">0%</div>
+          <div class="score-label">Score</div>
+        </div>
+      </div>
+      <div class="score-verdict" id="score2-verdict">Good job!</div>
+      <div class="score-sub" id="score2-sub"></div>
+    </div>
+    <div class="results-stats">
+      <div class="stat-card">
+        <div class="stat-num correct-color" id="r2-correct">0</div>
+        <div class="stat-lbl">Correct</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num wrong-color" id="r2-wrong">0</div>
+        <div class="stat-lbl">Wrong</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="r2-total">0</div>
+        <div class="stat-lbl">Total</div>
+      </div>
+    </div>
+    <div class="results-actions">
+      <button class="res-btn" onclick="endQuiz2()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+        Change Settings
+      </button>
+      <button class="res-btn primary" onclick="retakeQuiz2()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
+        Retake Exam
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
+// ---- QUIZ 2 DATA (167 MC Questions) ----
+const QUIZ2_DATA = [
+  { q: "What is the primary purpose of a cloud security group (CSG) in a public cloud environment?", options: ["To provide physical security for cloud data centers", "To manage access control for cloud resources", "To optimize cloud resource allocation", "To enforce regulatory compliance in the cloud"], answer: 1 },
+  { q: "What is the main advantage of using a symmetric encryption algorithm over an asymmetric encryption algorithm?", options: ["Symmetric encryption algorithms are faster and more efficient", "Asymmetric encryption algorithms provide better security", "Symmetric encryption algorithms require fewer resources", "Asymmetric encryption algorithms are easier to implement"], answer: 0 },
+  { q: "What is the primary purpose of using digital signatures in cryptographic protocols?", options: ["To encrypt data for secure transmission", "To verify the integrity and authenticity of data", "To generate random cryptographic keys", "To prevent unauthorized access to sensitive information"], answer: 1 },
+  { q: "What security feature is commonly used with HTTPS?", options: ["IPsec", "SSH", "SSL/TLS", "VPN"], answer: 2 },
+  { q: "Which of the following is a characteristic of Infrastructure as a Service (IaaS)?", options: ["Fully managed applications", "Pay-as-you-go pricing model", "Predetermined software configurations", "Limited scalability options"], answer: 3 },
+  { q: "What is the primary purpose of implementing a disaster recovery plan in a cloud environment?", options: ["To prevent unauthorized access to cloud resources", "To ensure continuous availability of critical services during a disaster", "To optimize cloud resource utilization", "To automate software deployment processes"], answer: 1 },
+  { q: "Which device is used to connect WAN to LAN?", options: ["Firewalls", "Router", "Hub", "Switch"], answer: 1 },
+  { q: "Which cloud service model provides developers with a platform to build, deploy, and manage applications without managing underlying infrastructure?", options: ["Infrastructure as a Service (IaaS)", "Platform as a Service (PaaS)", "Software as a Service (SaaS)", "Function as a Service (FaaS)"], answer: 1 },
+  { q: "An attacker intercepts traffic between a user and a server in order to eavesdrop on sensitive information being transmitted. This is an example of what type of attack?", options: ["On-path Attack", "Spoofing", "Phishing", "Side-channel"], answer: 0 },
+  { q: "Which network security measure is used to authenticate and authorize users and devices connecting to a network?", options: ["Virtual Private Network (VPN)", "Intrusion Detection System (IDS)", "Network Access Control (NAC)", "Packet Filtering"], answer: 2 },
+  { q: "Which port is used by the FTP protocol?", options: ["21", "22", "23", "80"], answer: 0 },
+  { q: "Which authentication mechanism is commonly used to access cloud resources securely from external networks?", options: ["Username and password", "Biometric authentication", "OAuth (Open Authorization)", "LDAP (Lightweight Directory Access Protocol)"], answer: 0 },
+  { q: "Which port is commonly used for SSH?", options: ["22", "23", "80", "443"], answer: 0 },
+  { q: "What is the primary purpose of data encryption in transit in cloud environments?", options: ["To prevent unauthorized access to cloud resources", "To protect data from unauthorized disclosure during transmission over networks", "To optimize cloud resource utilization", "To automate software deployment processes"], answer: 1 },
+  { q: "A user receives an email that appears to be from their bank, requesting their login credentials. This is an example of what type of attack?", options: ["Spoofing", "Phishing", "DOS/DDOS", "Virus"], answer: 1 },
+  { q: "Which port is used by the SSH protocol for secure file transfers?", options: ["SFTP", "SCP", "FTPS", "TFTP"], answer: 0 },
+  { q: "What is the purpose of conducting regular tests and exercises of a Business Continuity Plan (BCP)?", options: ["To minimize resource utilization during normal operations", "To validate the effectiveness of the plan and identify areas for improvement", "To increase profitability of the organization", "To prevent all types of disasters from occurring"], answer: 1 },
+  { q: "What is the main advantage of using a cloud access security broker (CASB) solution in cloud environments?", options: ["To prevent distributed denial of service (DDoS) attacks", "To monitor and control data traffic between on-premises and cloud environments", "To encrypt data stored in cloud databases", "To optimize cloud resource utilization"], answer: 1 },
+  { q: "What is the purpose of a Business Continuity Plan (BCP)?", options: ["To prevent all types of disasters from occurring", "To ensure the organization can continue critical business operations during and after a disaster", "To optimize resource utilization during normal operations", "To increase profitability"], answer: 1 },
+  { q: "Which type of attack involves flooding a network or server with traffic, rendering it unavailable to legitimate users?", options: ["DOS/DDOS", "Spoofing", "Phishing", "Virus"], answer: 0 },
+  { q: "Which cloud deployment model provides dedicated infrastructure for a single organization?", options: ["Public cloud", "Private cloud", "Hybrid cloud", "Community cloud"], answer: 1 },
+  { q: "What is the primary goal of cloud access security brokers (CASBs)?", options: ["To provide identity and access management services", "To monitor and control data traffic between on-premises and cloud environments", "To encrypt data stored in cloud databases", "To optimize cloud resource allocation"], answer: 1 },
+  { q: "What is the primary purpose of data encryption in transit in cloud environments? (Q23)", options: ["To prevent unauthorized access to cloud resources", "To protect data from unauthorized disclosure during transmission over networks", "To optimize cloud resource utilization", "To automate software deployment processes"], answer: 1 },
+  { q: "Which encryption protocol is commonly used to secure data transmitted over wireless networks?", options: ["WPA2 (Wi-Fi Protected Access 2)", "SSL (Secure Sockets Layer)", "TLS (Transport Layer Security)", "AES (Advanced Encryption Standard)"], answer: 0 },
+  { q: "How does IPSec protect against replay attacks?", options: ["By encrypting all network traffic", "By using digital signatures", "By using sequence numbers", "By limiting access to the network"], answer: 2 },
+  { q: "Which cloud deployment model provides a combination of private and public cloud resources?", options: ["Public cloud", "Private cloud", "Hybrid cloud", "Community cloud"], answer: 2 },
+  { q: "Which port is used by the Telnet protocol?", options: ["23", "21", "22", "80"], answer: 0 },
+  { q: "Which authentication mechanism is commonly used to access cloud resources securely from external networks? (Q28)", options: ["Username and password", "Biometric authentication", "OAuth (Open Authorization)", "LDAP (Lightweight Directory Access Protocol)"], answer: 2 },
+  { q: "What is the primary purpose of using role-based access control (RBAC) in a cloud environment?", options: ["To prevent distributed denial of service (DDoS) attacks", "To enforce regulatory compliance", "To monitor user activities and access patterns", "To restrict access to cloud resources based on users' roles and responsibilities"], answer: 3 },
+  { q: "What is the primary purpose of network segmentation in cloud environments?", options: ["To increase network bandwidth", "To reduce latency for cloud applications", "To isolate sensitive workloads and data from potential threats", "To automate network provisioning processes"], answer: 2 },
+  { q: "Which of the following is an example of a registered port?", options: ["Microsoft SQL Server", "RADIUS authentication", "HTTP", "SMB"], answer: 0 },
+  { q: "What is the purpose of implementing a Virtual Private Network (VPN) in a network?", options: ["To optimize network performance", "To securely connect remote users and devices to a private network over the internet", "To prevent physical access to network devices", "To monitor network traffic for compliance purposes"], answer: 1 },
+  { q: "Which cloud service model provides ready-to-use software applications over the internet?", options: ["Infrastructure as a Service (IaaS)", "Platform as a Service (PaaS)", "Software as a Service (SaaS)", "Function as a Service (FaaS)"], answer: 2 },
+  { q: "An organization is experiencing issues with their VPN connection, causing frequent disconnects. Which OSI layer is most likely affected by this issue?", options: ["Application Layer", "Transport Layer", "Network Layer", "Physical Layer"], answer: 1 },
+  { q: "Which cryptographic algorithm is vulnerable to collision attacks and should not be used for generating digital signatures?", options: ["AES (Advanced Encryption Standard)", "RSA (Rivest-Shamir-Adleman)", "MD5 (Message Digest Algorithm 5)", "SHA-256 (Secure Hash Algorithm 256-bit)"], answer: 2 },
+  { q: "What is the primary purpose of a distributed denial of service (DDoS) mitigation service in cloud environments?", options: ["To prevent unauthorized access to cloud resources", "To monitor and analyze network traffic patterns", "To detect and block malicious traffic targeting cloud services", "To optimize cloud resource utilization"], answer: 2 },
+  { q: "Which cloud service model provides ready-to-use software applications over the internet? (Q37)", options: ["Infrastructure as a Service (IaaS)", "Platform as a Service (PaaS)", "Software as a Service (SaaS)", "Function as a Service (FaaS)"], answer: 2 },
+  { q: "Which of the following would be considered an endpoint?", options: ["Software task", "Router", "Firewall", "Laptop"], answer: 3 },
+  { q: "Which encryption algorithm is commonly used to protect data in transit between cloud services and users' devices?", options: ["AES (Advanced Encryption Standard)", "RSA (Rivest-Shamir-Adleman)", "DES (Data Encryption Standard)", "MD5 (Message Digest Algorithm 5)"], answer: 0 },
+  { q: "What is an IPv4 address?", options: ["A 128-bit address used to uniquely identify devices on a network.", "A 32-bit address used to uniquely identify devices on a network.", "An address used for internal network use only.", "An address used for documentation purposes only."], answer: 1 },
+  { q: "A user receives an email that appears to be from their bank, requesting their login credentials. (Q41)", options: ["Spoofing", "Phishing", "DOS/DDOS", "Virus"], answer: 1 },
+  { q: "Which cryptographic attack targets the process of intercepting and altering communication between two parties?", options: ["Man-in-the-middle (MITM) attack", "Brute-force attack", "Dictionary attack", "Rainbow table attack"], answer: 0 },
+  { q: "Which type of malware encrypts a user's files and demands payment in exchange for the decryption key?", options: ["Ransomware", "Worm", "Trojan", "Virus"], answer: 0 },
+  { q: "What security control is used to protect data in transit between cloud services and users' devices?", options: ["Data encryption at rest", "Network intrusion detection systems (NIDS)", "Transport Layer Security (TLS)", "Role-based access control (RBAC)"], answer: 2 },
+  { q: "Which component of a Business Continuity Plan (BCP) identifies critical business functions and the resources required to support them?", options: ["Plan development and testing", "Risk assessment", "Business impact analysis (BIA)", "Plan implementation"], answer: 2 },
+  { q: "What is the primary purpose of data encryption in transit in cloud environments? (Q46)", options: ["To prevent unauthorized access to cloud resources", "To protect data from unauthorized disclosure during transmission over networks", "To optimize cloud resource utilization", "To automate software deployment processes"], answer: 1 },
+  { q: "What is the primary objective of a disaster recovery plan in cloud computing?", options: ["To prevent unauthorized access to cloud resources", "To ensure continuous availability of critical services during a disaster", "To optimize cloud resource utilization", "To automate software deployment processes"], answer: 1 },
+  { q: "What is the primary purpose of using a digital certificate in public key infrastructure (PKI)?", options: ["To encrypt data for secure transmission", "To authenticate the identity of users and devices", "To generate random cryptographic keys", "To prevent buffer overflow attacks"], answer: 1 },
+  { q: "A hacker gains access to a company's network and begins to intercept network traffic in order to steal login credentials. Which OSI layer is being attacked?", options: ["Physical layer", "Data link layer", "Network layer", "Application layer"], answer: 1 },
+  { q: "Which security control is used to verify the integrity and authenticity of cloud service providers?", options: ["Service level agreements (SLAs)", "Cloud security certifications", "Encryption protocols", "Intrusion detection systems (IDS)"], answer: 1 },
+  { q: "Which encryption algorithm is commonly used to protect data in transit in cloud environments?", options: ["AES (Advanced Encryption Standard)", "DES (Data Encryption Standard)", "RSA (Rivest-Shamir-Adleman)", "MD5 (Message Digest Algorithm 5)"], answer: 0 },
+  { q: "Which of the following is a characteristic of a public cloud deployment model?", options: ["Dedicated infrastructure for a single organization", "Limited scalability options", "Shared infrastructure for multiple organizations", "Full control over hardware and software configurations"], answer: 2 },
+  { q: "At which layer of the TCP/IP protocol stack does a firewall operate?", options: ["Layer 1", "Layer 2", "Layer 3", "Layer 4"], answer: 3 },
+  { q: "What is the primary purpose of using a salt when hashing passwords?", options: ["To add flavor to the password", "To increase the entropy of the hashed passwords", "To make the passwords easier to crack", "To decrease the security of the hashing algorithm"], answer: 1 },
+  { q: "Which security control is used to prevent unauthorized access to sensitive data in cloud databases?", options: ["Role-based access control (RBAC)", "Network intrusion detection systems (NIDS)", "Distributed denial of service (DDoS) mitigation", "Security information and event management (SIEM)"], answer: 0 },
+  { q: "What protocol is associated with port 53?", options: ["DNS", "SMTP", "HTTP", "HTTPS"], answer: 0 },
+  { q: "What layer of the OSI model is the target of a ping flood attack?", options: ["Layer 3", "Layer 4", "Layer 5", "Layer 6"], answer: 0 },
+  { q: "What is the potential impact of an IPSec replay attack?", options: ["Unauthorized access to network resources", "Disruption of network communication", "Modification of network traffic", "All of the above"], answer: 3 },
+  { q: "Which security control is used to protect data in transit between cloud services and users' devices? (Q59)", options: ["Data encryption at rest", "Network intrusion detection systems (NIDS)", "Transport Layer Security (TLS)", "Role-based access control (RBAC)"], answer: 2 },
+  { q: "What is the primary goal of implementing multi-factor authentication (MFA) in a cloud environment?", options: ["To prevent unauthorized access to cloud resources", "To optimize cloud resource utilization", "To automate software deployment processes", "To monitor user activities and access patterns"], answer: 0 },
+  { q: "Which cloud deployment model provides cloud resources exclusively for a specific organization?", options: ["Hybrid cloud", "Public cloud", "Private cloud", "Community cloud"], answer: 2 },
+  { q: "What is the primary purpose of implementing network segmentation?", options: ["To prevent unauthorized access to network resources", "To increase the speed of data transmission across the network", "To divide a network into smaller subnetworks for improved security and performance", "To monitor network traffic for compliance purposes"], answer: 2 },
+  { q: "Which encryption algorithm is commonly used to protect data at rest in cloud storage?", options: ["AES (Advanced Encryption Standard)", "RSA (Rivest-Shamir-Adleman)", "DES (Data Encryption Standard)", "MD5 (Message Digest Algorithm 5)"], answer: 0 },
+  { q: "A user clicks on an attachment in an email that they believe is from a friend, which then installs malicious software on their computer. This is an example of what type of malware?", options: ["Worm", "Virus", "Trojan", "Ransomware"], answer: 2 },
+  { q: "A company has been experiencing network connectivity issues that have been traced to a problem with the cabling. Which OSI layer is affected by this issue?", options: ["Application Layer", "Transport Layer", "Network Layer", "Physical Layer"], answer: 3 },
+  { q: "What is the primary goal of data loss prevention (DLP) solutions in cloud environments?", options: ["To prevent unauthorized access to cloud resources", "To monitor and control data movement within and outside the organization", "To optimize cloud resource utilization", "To automate software deployment processes"], answer: 1 },
+  { q: "A hacker uses a distributed denial of service (DDoS) attack to flood a company's network with traffic. Which OSI layer is being attacked?", options: ["Physical layer", "Data link layer", "Network layer", "Transport layer"], answer: 2 },
+  { q: "What is the well-known port for SMTP?", options: ["25", "80", "443", "22"], answer: 0 },
+  { q: "What are registered ports used for?", options: ["Proprietary applications from vendors and developers", "Common protocols at the core of TCP/IP model", "Used for Web servers", "Used for in-house or open-source applications"], answer: 0 },
+  { q: "Which cloud service model provides developers with a platform to build, deploy, and manage applications without managing underlying infrastructure? (Q70)", options: ["Infrastructure as a Service (IaaS)", "Platform as a Service (PaaS)", "Software as a Service (SaaS)", "Function as a Service (FaaS)"], answer: 1 },
+  { q: "What layer of the OSI model is the target of a port scanning attack?", options: ["Layer 1", "Layer 2", "Layer 3", "Layer 4"], answer: 3 },
+  { q: "A user reports that they are unable to access a specific website. Which OSI layer is most likely affected?", options: ["Application Layer", "Transport Layer", "Network Layer", "Data Link Layer"], answer: 0 },
+  { q: "What is the primary objective of implementing a cloud access security broker (CASB) solution?", options: ["To manage cloud service provider relationships", "To optimize cloud resource utilization", "To monitor and control data traffic between on-premises and cloud environments", "To encrypt data stored in cloud databases"], answer: 2 },
+  { q: "Which cloud deployment model provides cloud resources exclusively for a specific organization? (Q74)", options: ["Public cloud", "Private cloud", "Hybrid cloud", "Community cloud"], answer: 1 },
+  { q: "What is the purpose of a cloud security posture management (CSPM) tool?", options: ["To monitor and enforce compliance with security policies in cloud environments", "To optimize cloud resource allocation", "To encrypt data stored in cloud databases", "To automate software deployment processes"], answer: 0 },
+  { q: "What security control is used to protect data at rest in cloud storage?", options: ["Role-based access control (RBAC)", "Data encryption", "Intrusion detection systems (IDS)", "Multi-factor authentication (MFA)"], answer: 1 },
+  { q: "What is the main advantage of using a cloud access security broker (CASB) solution in cloud environments? (Q77)", options: ["To prevent distributed denial of service (DDoS) attacks", "To monitor and control data traffic between on-premises and cloud environments", "To encrypt data stored in cloud databases", "To optimize cloud resource utilization"], answer: 1 },
+  { q: "What is the primary goal of a Disaster Recovery Plan (DRP)?", options: ["To prevent all types of disasters from occurring", "To ensure the continuity of critical business operations", "To optimize resource utilization during normal operations", "To increase profitability"], answer: 1 },
+  { q: "Which cloud deployment model provides dedicated infrastructure for a single organization? (Q79)", options: ["Public cloud", "Private cloud", "Hybrid cloud", "Community cloud"], answer: 1 },
+  { q: "What protocol is associated with port 80?", options: ["HTTP", "FTP", "SSH", "Telnet"], answer: 0 },
+  { q: "What is the purpose of a virtual private cloud (VPC)?", options: ["To provide dedicated physical servers to customers", "To isolate network traffic within a public cloud environment", "To optimize virtual machine performance", "To enforce strict access controls on cloud resources"], answer: 1 },
+  { q: "What is the primary purpose of a distributed denial of service (DDoS) mitigation service in cloud environments? (Q82)", options: ["To prevent unauthorized access to cloud resources", "To monitor and analyze network traffic patterns", "To detect and block malicious traffic targeting cloud services", "To optimize cloud resource utilization"], answer: 2 },
+  { q: "Which security control is used to detect and respond to security incidents in cloud environments?", options: ["Multi-factor authentication (MFA)", "Intrusion detection systems (IDS)", "Role-based access control (RBAC)", "Data encryption at rest"], answer: 1 },
+  { q: "What is the primary goal of implementing a disaster recovery plan in a cloud environment? (Q84)", options: ["To prevent unauthorized access to cloud resources", "To ensure continuous availability of critical services during a disaster", "To optimize cloud resource utilization", "To automate software deployment processes"], answer: 1 },
+  { q: "A user reports that they are unable to access a specific website. Which OSI layer is most likely affected? (Q85)", options: ["Application Layer", "Transport Layer", "Network Layer", "Data Link Layer"], answer: 0 },
+  { q: "What layer of the OSI model is the target of a man-in-the-middle (MITM) attack?", options: ["Layer 2", "Layer 3", "Layer 4", "Layer 7"], answer: 1 },
+  { q: "What is the main advantage of using a cloud access security broker (CASB) solution in cloud environments? (Q87)", options: ["To prevent distributed denial of service (DDoS) attacks", "To monitor and control data traffic between on-premises and cloud environments", "To encrypt data stored in cloud databases", "To optimize cloud resource utilization"], answer: 1 },
+  { q: "Which cloud service model provides access to virtualized computing resources over the internet?", options: ["Infrastructure as a Service (IaaS)", "Software as a Service (SaaS)", "Platform as a Service (PaaS)", "Function as a Service (FaaS)"], answer: 0 },
+  { q: "What is the primary goal of implementing role-based access control (RBAC) in a cloud environment?", options: ["To prevent distributed denial of service (DDoS) attacks", "To enforce regulatory compliance", "To monitor user activities and access patterns", "To restrict access to cloud resources based on users' roles and responsibilities"], answer: 3 },
+  { q: "What is the primary purpose of using encryption at rest in cloud storage?", options: ["To prevent unauthorized access to cloud resources", "To protect data from unauthorized disclosure during transmission over networks", "To optimize cloud resource utilization", "To protect data stored in cloud storage from unauthorized access"], answer: 3 },
+  { q: "Which phase of the Business Continuity Planning (BCP) process involves identifying potential risks and threats?", options: ["Risk assessment", "Business impact analysis", "Plan development and testing", "Plan implementation"], answer: 0 },
+  { q: "Which authentication mechanism is commonly used to access cloud resources securely from external networks? (Q92)", options: ["Username and password", "Biometric authentication", "OAuth (Open Authorization)", "LDAP (Lightweight Directory Access Protocol)"], answer: 2 },
+  { q: "What is the primary purpose of using network segmentation in a cloud environment?", options: ["To optimize network bandwidth", "To increase network latency", "To isolate workloads and data for security purposes", "To automate network provisioning processes"], answer: 2 },
+  { q: "Which cloud service model provides developers with a platform to build, deploy, and manage applications without managing underlying infrastructure? (Q94)", options: ["Infrastructure as a Service (IaaS)", "Platform as a Service (PaaS)", "Software as a Service (SaaS)", "Function as a Service (FaaS)"], answer: 1 },
+  { q: "What is the primary purpose of a cloud security group (CSG) in a public cloud environment? (Q95)", options: ["To provide physical security for cloud data centers", "To manage access control for cloud resources", "To optimize cloud resource allocation", "To enforce regulatory compliance in the cloud"], answer: 1 },
+  { q: "Which type of malware encrypts a user's files and demands payment in exchange for the decryption key? (Q96)", options: ["Ransomware", "Worm", "Trojan", "Virus"], answer: 0 },
+  { q: "What is the main advantage of using a cloud access security broker (CASB) solution in cloud environments? (Q97)", options: ["To prevent distributed denial of service (DDoS) attacks", "To monitor and control data traffic between on-premises and cloud environments", "To encrypt data stored in cloud databases", "To optimize cloud resource utilization"], answer: 1 },
+  { q: "What is the primary purpose of using a nonce in cryptographic protocols?", options: ["To add randomness to the encryption process", "To increase the security of the cryptographic keys", "To prevent replay attacks", "To authenticate the parties involved in the communication"], answer: 2 },
+  { q: "A hacker uses a DNS spoofing attack to redirect a user to a fake website. Which OSI layer is being attacked?", options: ["Physical layer", "Data link layer", "Network layer", "Application layer"], answer: 3 },
+  { q: "An attacker intercepts traffic between a user and a server in order to eavesdrop on sensitive information. (Q100)", options: ["On-path Attack", "Spoofing", "Phishing", "Side-channel"], answer: 0 },
+  { q: "Which security control is used to monitor and analyze user activities and access patterns in cloud environments?", options: ["Security information and event management (SIEM)", "Intrusion detection systems (IDS)", "Multi-factor authentication (MFA)", "Role-based access control (RBAC)"], answer: 0 },
+  { q: "What is the primary purpose of using role-based access control (RBAC) in a cloud environment? (Q102)", options: ["To prevent distributed denial of service (DDoS) attacks", "To enforce regulatory compliance", "To monitor user activities and access patterns", "To restrict access to cloud resources based on users' roles and responsibilities"], answer: 3 },
+  { q: "What is the range of dynamic or private ports?", options: ["49152–65535", "0–1023", "1024–49151", "None of the above"], answer: 0 },
+  { q: "Which security control is designed to detect and prevent buffer overflow attacks?", options: ["Intrusion detection systems (IDS)", "Firewalls", "Antivirus software", "Input validation mechanisms"], answer: 3 },
+  { q: "What layer of the OSI model is the target of a MAC flooding attack?", options: ["Layer 2", "Layer 3", "Layer 4", "Layer 7"], answer: 0 },
+  { q: "What is the primary purpose of implementing multi-factor authentication (MFA) in a cloud environment? (Q106)", options: ["To optimize cloud resource utilization", "To prevent unauthorized access to cloud resources", "To automate software deployment processes", "To monitor user activities and access patterns"], answer: 1 },
+  { q: "What is the main purpose of an Incident Response Plan (IRP)?", options: ["To improve employee productivity", "To prevent all security incidents from occurring", "To allocate resources for routine maintenance tasks", "To provide guidelines and procedures for responding to and mitigating security incidents"], answer: 3 },
+  { q: "What is the primary purpose of a cloud security group (CSG) in a public cloud environment? (Q108)", options: ["To provide physical security for cloud data centers", "To manage access control for cloud resources", "To optimize cloud resource allocation", "To enforce regulatory compliance in the cloud"], answer: 1 },
+  { q: "What is the primary goal of implementing role-based access control (RBAC) in a cloud environment? (Q109)", options: ["To prevent distributed denial of service (DDoS) attacks", "To enforce regulatory compliance", "To monitor user activities and access patterns", "To restrict access to cloud resources based on users' roles and responsibilities"], answer: 3 },
+  { q: "Which type of attack involves flooding a network or server with traffic, rendering it unavailable? (Q110)", options: ["DOS/DDOS", "Spoofing", "Phishing", "Virus"], answer: 0 },
+  { q: "What is the purpose of a distributed denial of service (DDoS) mitigation service in cloud environments? (Q111)", options: ["To prevent unauthorized access to cloud resources", "To monitor and analyze network traffic patterns", "To detect and block malicious traffic targeting cloud services", "To optimize cloud resource utilization"], answer: 2 },
+  { q: "A user clicks on an attachment in an email that installs malicious software. This is an example of what type of malware? (Q112)", options: ["Worm", "Virus", "Trojan", "Ransomware"], answer: 2 },
+  { q: "Which cloud deployment model provides a combination of private and public cloud resources? (Q113)", options: ["Public cloud", "Private cloud", "Hybrid cloud", "Community cloud"], answer: 2 },
+  { q: "Which of the following is a characteristic of a public cloud deployment model? (Q114)", options: ["Dedicated infrastructure for a single organization", "Limited scalability options", "Shared infrastructure for multiple organizations", "Full control over hardware and software configurations"], answer: 2 },
+  { q: "What security measure can help prevent unauthorized access to cloud resources through stolen or compromised credentials?", options: ["Intrusion detection systems (IDS)", "Multi-factor authentication (MFA)", "Data encryption at rest", "Network segmentation"], answer: 1 },
+  { q: "A hacker uses a DDoS attack to flood a company's network. Which OSI layer is being attacked? (Q116)", options: ["Physical layer", "Data link layer", "Network layer", "Transport layer"], answer: 2 },
+  { q: "What is the primary objective of implementing a cloud access security broker (CASB) solution? (Q117)", options: ["To manage cloud service provider relationships", "To optimize cloud resource utilization", "To monitor and control data traffic between on-premises and cloud environments", "To encrypt data stored in cloud databases"], answer: 2 },
+  { q: "What layer of the OSI model is the target of a SYN flood attack?", options: ["Layer 4", "Layer 5", "Layer 6", "Layer 7"], answer: 0 },
+  { q: "What security measure can help prevent unauthorized access to cloud resources through stolen or compromised credentials? (Q119)", options: ["Intrusion detection systems (IDS)", "Multi-factor authentication (MFA)", "Data encryption at rest", "Network segmentation"], answer: 1 },
+  { q: "Which encryption algorithm is commonly used to protect data in transit between cloud services and users' devices? (Q120)", options: ["AES (Advanced Encryption Standard)", "RSA (Rivest-Shamir-Adleman)", "DES (Data Encryption Standard)", "MD5 (Message Digest Algorithm 5)"], answer: 0 },
+  { q: "An organization is experiencing issues with their VPN connection, causing frequent disconnects. Which OSI layer is most likely affected? (Q121)", options: ["Application Layer", "Transport Layer", "Network Layer", "Physical Layer"], answer: 1 },
+  { q: "Which cloud service model provides ready-to-use software applications over the internet? (Q122)", options: ["Platform as a Service (PaaS)", "Infrastructure as a Service (IaaS)", "Software as a Service (SaaS)", "Function as a Service (FaaS)"], answer: 2 },
+  { q: "Which authentication mechanism is commonly used to access cloud resources securely from external networks? (Q123)", options: ["Username and password", "Biometric authentication", "OAuth (Open Authorization)", "LDAP (Lightweight Directory Access Protocol)"], answer: 2 },
+  { q: "A company has been experiencing network connectivity issues traced to a problem with the cabling. Which OSI layer is affected? (Q124)", options: ["Application Layer", "Transport Layer", "Network Layer", "Physical Layer"], answer: 3 },
+  { q: "What is an IPv4 address? (Q125)", options: ["A 128-bit address used to uniquely identify devices on a network.", "A 32-bit address used to uniquely identify devices on a network.", "An address used for internal network use only.", "An address used for documentation purposes only."], answer: 1 },
+  { q: "Which security control is used to detect and respond to security incidents in cloud environments? (Q126)", options: ["Intrusion detection systems (IDS)", "Multi-factor authentication (MFA)", "Role-based access control (RBAC)", "Data encryption at rest"], answer: 0 },
+  { q: "Which security control is used to prevent unauthorized access to sensitive data in cloud databases? (Q127)", options: ["Role-based access control (RBAC)", "Network intrusion detection systems (NIDS)", "Distributed denial of service (DDoS) mitigation", "Security information and event management (SIEM)"], answer: 0 },
+  { q: "What is the primary purpose of a cloud access security broker (CASB) solution? (Q128)", options: ["To manage cloud service provider relationships", "To optimize cloud resource utilization", "To monitor and control data traffic between on-premises and cloud environments", "To encrypt data stored in cloud databases"], answer: 2 },
+  { q: "Which cloud deployment model provides dedicated infrastructure for a single organization? (Q129)", options: ["Public cloud", "Private cloud", "Hybrid cloud", "Community cloud"], answer: 1 },
+  { q: "What is the range of well-known ports?", options: ["0–1023", "1024–49151", "1024–49151", "None of the above"], answer: 0 },
+  { q: "What is the primary purpose of implementing a firewall in a network?", options: ["To optimize network performance", "To monitor and control incoming and outgoing network traffic", "To encrypt data transmitted over the network", "To prevent physical access to network devices"], answer: 1 },
+  { q: "Which of the following is a characteristic of a private cloud deployment model?", options: ["Shared infrastructure for multiple organizations", "Limited scalability options", "Dedicated infrastructure for a single organization", "Full control over hardware and software configurations"], answer: 2 },
+  { q: "Which encryption algorithm is commonly used to protect data at rest in cloud storage? (Q133)", options: ["AES (Advanced Encryption Standard)", "RSA (Rivest-Shamir-Adleman)", "DES (Data Encryption Standard)", "MD5 (Message Digest Algorithm 5)"], answer: 0 },
+  { q: "What is an IP address?", options: ["A physical address used to connect multiple devices in a network", "An address that represents the network interface within the network", "An address that denotes the vendor or manufacturer of the physical network interface", "A logical address associated with a unique network interface within the network"], answer: 3 },
+  { q: "What is the difference between a hub and a switch?", options: ["A hub is smarter than a switch.", "A switch is less likely to be seen in home networks.", "A switch can create separate broadcast domains when used to create VLANs.", "A switch retransmits traffic to all devices, while a switch routes traffic to a specific device."], answer: 3 },
+  { q: "Which device is used to control traffic flow on networks?", options: ["Switch", "Firewalls", "Hub", "Router"], answer: 0 },
+  { q: "Which protocol is used for secure email?", options: ["SMTPS", "IMAPS", "POP3S", "All of the above"], answer: 3 },
+  { q: "Which phase of the Incident Response Plan (IRP) process involves containing the impact of a security incident and mitigating further damage?", options: ["Preparation and planning", "Detection and analysis", "Response and mitigation", "Recovery and post-incident activities"], answer: 2 },
+  { q: "What layer of the OSI model is the target of a buffer overflow attack?", options: ["Layer 5", "Layer 6", "Layer 7", "Layer 8"], answer: 2 },
+  { q: "What does the 'shared responsibility model' in cloud computing refer to?", options: ["Responsibility for data encryption", "Division of security responsibilities between the cloud provider and the customer", "Ownership of physical infrastructure", "Compliance with industry regulations"], answer: 1 },
+  { q: "What is the primary purpose of using network segmentation in a cloud environment? (Q141)", options: ["To optimize network bandwidth", "To increase network latency", "To isolate workloads and data for security purposes", "To automate network provisioning processes"], answer: 2 },
+  { q: "How does subnetting help to improve network performance?", options: ["By reducing network congestion", "By increasing network bandwidth", "By improving network security", "By simplifying network management"], answer: 0 },
+  { q: "Which cloud service model provides ready-to-use software applications over the internet? (Q143)", options: ["Infrastructure as a Service (IaaS)", "Platform as a Service (PaaS)", "Software as a Service (SaaS)", "Function as a Service (FaaS)"], answer: 2 },
+  { q: "Which port is commonly used for HTTPS?", options: ["80", "443", "446", "22"], answer: 1 },
+  { q: "Which security control is used to prevent unauthorized access to sensitive data in cloud databases? (Q145)", options: ["Role-based access control (RBAC)", "Network intrusion detection systems (NIDS)", "Distributed denial of service (DDoS) mitigation", "Security information and event management (SIEM)"], answer: 0 },
+  { q: "What security measure can help prevent unauthorized access to cloud resources through stolen or compromised credentials? (Q146)", options: ["Intrusion detection systems (IDS)", "Multi-factor authentication (MFA)", "Data encryption at rest", "Network segmentation"], answer: 1 },
+  { q: "What is the primary purpose of implementing network encryption in a cloud environment?", options: ["To prevent unauthorized access to cloud resources", "To protect data from unauthorized disclosure during transmission over networks", "To optimize cloud resource utilization", "To automate software deployment processes"], answer: 1 },
+  { q: "What is the primary purpose of using role-based access control (RBAC) in a cloud environment? (Q148)", options: ["To monitor user activities and access patterns", "To prevent distributed denial of service (DDoS) attacks", "To enforce regulatory compliance", "To restrict access to cloud resources based on users' roles and responsibilities"], answer: 3 },
+  { q: "A hacker uses a man-in-the-middle attack to intercept network traffic between two nodes. Which TCP layer is being attacked?", options: ["Physical layer", "Transport layer", "Network layer", "Application layer"], answer: 1 },
+  { q: "Which of the following is an example of a security control used to protect data at rest in cloud storage?", options: ["Transport Layer Security (TLS)", "Data encryption", "Intrusion detection systems (IDS)", "Multi-factor authentication (MFA)"], answer: 1 },
+  { q: "What is an IPSec replay attack?", options: ["An attack where an attacker attempts to inject packets into an existing session", "An attack where an attacker modifies packets in transit", "An attack where an attacker eavesdrops on network traffic", "An attack where an attacker overloads a network with traffic"], answer: 0 },
+  { q: "What is the primary goal of implementing intrusion detection and prevention systems (IDPS) in a network?", options: ["To monitor network traffic for compliance purposes", "To optimize network performance", "To detect and respond to malicious activities and security threats", "To prevent physical access to network devices"], answer: 2 },
+  { q: "A company's router is not configured properly, leading to network congestion. Which OSI layer is most likely affected?", options: ["Application Layer", "Transport Layer", "Network Layer", "Data Link Layer"], answer: 2 },
+  { q: "Which cloud service model provides access to virtualized computing resources over the internet? (Q154)", options: ["Infrastructure as a Service (IaaS)", "Platform as a Service (PaaS)", "Software as a Service (SaaS)", "Function as a Service (FaaS)"], answer: 0 },
+  { q: "What is the primary goal of implementing data loss prevention (DLP) solutions in cloud environments?", options: ["To prevent unauthorized access to cloud resources", "To monitor and control data movement within and outside the organization", "To optimize cloud resource utilization", "To automate software deployment processes"], answer: 1 },
+  { q: "What is the main advantage of using a rainbow table attack compared to a brute-force attack?", options: ["Rainbow table attacks are faster and more efficient", "Brute-force attacks are less computationally intensive", "Rainbow table attacks are less likely to succeed", "Brute-force attacks require less memory resources"], answer: 0 },
+  { q: "A company's router is not configured properly, leading to network congestion. Which OSI layer is most likely affected? (Q157)", options: ["Application Layer", "Transport Layer", "Network Layer", "Data Link Layer"], answer: 2 },
+  { q: "A hacker sends a malicious email attachment to an employee. Which TCP layer is being attacked?", options: ["Application layer", "Transport layer", "Network layer", "Physical layer"], answer: 0 },
+  { q: "What is the primary purpose of using encryption at rest in cloud storage? (Q159)", options: ["To prevent unauthorized access to cloud resources", "To optimize cloud resource utilization", "To automate software deployment processes", "To protect data stored in cloud storage from unauthorized access"], answer: 3 },
+  { q: "Which security control is used to monitor and analyze user activities and access patterns in cloud environments? (Q160)", options: ["Security information and event management (SIEM)", "Intrusion detection systems (IDS)", "Multi-factor authentication (MFA)", "Role-based access control (RBAC)"], answer: 0 },
+  { q: "What is the primary goal of data loss prevention (DLP) solutions in cloud environments? (Q161)", options: ["To prevent unauthorized access to cloud resources", "To monitor and control data movement within and outside the organization", "To optimize cloud resource utilization", "To automate software deployment processes"], answer: 1 },
+  { q: "What security measure can help prevent unauthorized access to cloud resources through stolen or compromised credentials? (Q162)", options: ["Intrusion detection systems (IDS)", "Multi-factor authentication (MFA)", "Data encryption at rest", "Network segmentation"], answer: 1 },
+  { q: "Which cloud service model provides the highest level of abstraction and requires the least management effort by customers?", options: ["Infrastructure as a Service (IaaS)", "Platform as a Service (PaaS)", "Software as a Service (SaaS)", "Function as a Service (FaaS)"], answer: 2 },
+  { q: "What is the main advantage of using a one-time pad (OTP) encryption scheme?", options: ["OTP encryption provides perfect secrecy", "OTP encryption is computationally efficient", "OTP encryption requires smaller key sizes", "OTP encryption is resistant to brute-force attacks"], answer: 0 },
+  { q: "What is a key benefit of using containerization in cloud environments?", options: ["Improved hardware utilization", "Enhanced network security", "Simplified application deployment", "Reduced data transfer costs"], answer: 2 },
+  { q: "Which encryption algorithm is commonly used to protect data in transit between cloud services and users' devices? (Q166)", options: ["AES (Advanced Encryption Standard)", "RSA (Rivest-Shamir-Adleman)", "DES (Data Encryption Standard)", "MD5 (Message Digest Algorithm 5)"], answer: 0 },
+  { q: "What is the main problem with assigning static privileges to administrative users on a database?", options: ["Security is dependent upon the login process", "Administrative users may forget their privileges", "Static privileges are more expensive to implement", "Static privileges may not provide enough access"], answer: 0 },
+];
+
+// ---- QUIZ 2 LOGIC ----
+let quiz2Questions = [];
+let quiz2Index = 0;
+let quiz2Correct = 0;
+let quiz2Answered = false;
+
+function startQuiz2() {
+  const countVal = document.getElementById('quiz2-count').value;
+  const orderVal = document.getElementById('quiz2-order').value;
+  let pool = [...QUIZ2_DATA];
+  if (orderVal === 'random') {
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+  }
+  const n = countVal === 'all' ? pool.length : Math.min(parseInt(countVal), pool.length);
+  quiz2Questions = pool.slice(0, n);
+  quiz2Index = 0;
+  quiz2Correct = 0;
+  document.getElementById('quiz2-setup').classList.add('hide');
+  document.getElementById('quiz2-active').classList.add('show');
+  document.getElementById('quiz2-results').classList.remove('show');
+  document.getElementById('q2-chapter-label').textContent = 'Practice Exam';
+  renderQuestion2();
+}
+
+function renderQuestion2() {
+  stopAllSpeech();
+  const q = quiz2Questions[quiz2Index];
+  quiz2Answered = false;
+  const total = quiz2Questions.length;
+  document.getElementById('q2-num').textContent = (quiz2Index + 1) + ' / ' + total;
+  document.getElementById('q2-badge').textContent = 'Question ' + (quiz2Index + 1);
+  document.getElementById('q2-text').textContent = q.q;
+  const pct = (quiz2Index / total) * 100;
+  document.getElementById('q2-progress-fill').style.width = pct + '%';
+  document.getElementById('q2-feedback').classList.remove('show', 'correct', 'wrong');
+  document.getElementById('next-q2-btn').style.display = 'none';
+  const isLast = quiz2Index >= total - 1;
+  const nextBtn = document.getElementById('next-q2-btn');
+  nextBtn.innerHTML = isLast
+    ? 'See Results <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>'
+    : 'Next Question <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  const grid = document.getElementById('q2-options-grid');
+  grid.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span class="opt-text">${opt}</span>`;
+    btn.onclick = () => selectOption2(i, btn);
+    grid.appendChild(btn);
+  });
+}
+
+function selectOption2(chosenIdx, btn) {
+  if (quiz2Answered) return;
+  quiz2Answered = true;
+  const q = quiz2Questions[quiz2Index];
+  const isCorrect = chosenIdx === q.answer;
+  if (isCorrect) quiz2Correct++;
+  const allBtns = document.querySelectorAll('#q2-options-grid .opt-btn');
+  allBtns.forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.answer) b.classList.add('correct');
+    else if (b === btn && !isCorrect) b.classList.add('wrong');
+  });
+  const fb = document.getElementById('q2-feedback');
+  fb.classList.add('show');
+  if (isCorrect) {
+    fb.classList.add('correct');
+    fb.innerHTML = '<span class="feedback-correct">Correct!</span> ' + q.options[q.answer];
+  } else {
+    fb.classList.add('wrong');
+    fb.innerHTML = '<span class="feedback-wrong">Incorrect.</span> The correct answer is <strong>' + q.options[q.answer] + '</strong>.';
+  }
+  document.getElementById('next-q2-btn').style.display = 'flex';
+}
+
+function nextQuestion2() {
+  if (quiz2Index < quiz2Questions.length - 1) {
+    quiz2Index++;
+    renderQuestion2();
+  } else {
+    showResults2();
+  }
+}
+
+function showResults2() {
+  document.getElementById('quiz2-active').classList.remove('show');
+  const results = document.getElementById('quiz2-results');
+  results.classList.add('show');
+  const total = quiz2Questions.length;
+  const pct = Math.round((quiz2Correct / total) * 100);
+  document.getElementById('score2-pct').textContent = pct + '%';
+  document.getElementById('r2-correct').textContent = quiz2Correct;
+  document.getElementById('r2-wrong').textContent = total - quiz2Correct;
+  document.getElementById('r2-total').textContent = total;
+  const verdicts = [
+    [90, 'Excellent!', "Outstanding performance. You're exam-ready."],
+    [75, 'Good Job', 'Solid understanding. Review a few more topics.'],
+    [50, 'Keep Studying', "You're getting there. Practice more questions."],
+    [0, 'Keep Going', 'Review the material and try again. You can do it.'],
+  ];
+  const [,v,s] = verdicts.find(([t]) => pct >= t);
+  document.getElementById('score2-verdict').textContent = v;
+  document.getElementById('score2-sub').textContent = s;
+  const circumference = 314;
+  const offset = circumference - (pct / 100) * circumference;
+  const circle = document.getElementById('score2-circle');
+  circle.style.strokeDashoffset = circumference;
+  setTimeout(() => { circle.style.transition = 'stroke-dashoffset 1s ease'; circle.style.strokeDashoffset = offset; }, 100);
+}
+
+function endQuiz2() {
+  document.getElementById('quiz2-setup').classList.remove('hide');
+  document.getElementById('quiz2-active').classList.remove('show');
+  document.getElementById('quiz2-results').classList.remove('show');
+}
+
+function retakeQuiz2() {
+  document.getElementById('quiz2-results').classList.remove('show');
+  startQuiz2();
+}
+
 // ---- TEXT TO SPEECH ----
 let currentUtterance = null;
 let currentSpeakBtn = null;
